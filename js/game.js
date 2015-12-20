@@ -42,6 +42,17 @@ var sprites = {
 		h: 33,
 		frames: 1
 	}
+}; // end sprites
+
+var enemies = {
+	basic: {
+	x: 100,
+	y : -50,
+	sprite : 'enemy_purple',
+	B: 100 ,
+	C: 2,
+	E: 100
+}
 };
 
 
@@ -166,6 +177,9 @@ PlayerMissile.prototype.draw = function(ctx ){
 
 var playGame = function() {
 	var board = new GameBoard();
+
+	board.add(new Enemy(enemies.basic));
+	board.add(new Enemy(enemies.basic, {x : 200}));
 	board.add(new PlayerShip());
 	Game.setBoard(3, board);
 }

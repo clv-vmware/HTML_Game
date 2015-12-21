@@ -177,7 +177,7 @@ var Game = new function() {
 
    //handle collision
    this.overlap = function(o1, o2){
-     return !((o1.y + o1.h - 1  < o2.y) || (o1.y> o2.y + o2.h-1) || (o.x + o1.w -1 < o2.x) || (o1.x > o2.x + o2.w - 1));
+     return !((o1.y + o1.h - 1  < o2.y) || (o1.y> o2.y + o2.h-1) || (o1.x + o1.w -1 < o2.x) || (o1.x > o2.x + o2.w - 1));
    }
 
    this.collide = function(obj, type) {

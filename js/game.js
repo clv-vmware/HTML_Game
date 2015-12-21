@@ -46,6 +46,13 @@ var sprites = {
 		w: 32,
 		h: 33,
 		frames: 1
+	},
+	explosion: {
+		sx: 0,
+		sy: 64,
+		w: 64,
+		h: 64,
+		frames: 12
 	}
 }; // end sprites
 
@@ -56,7 +63,8 @@ var enemies = {
 	sprite : 'enemy_purple',
 	B: 100 ,
 	C: 2,
-	E: 100
+	E: 100,
+	health: 20
 }
 };
 
@@ -220,7 +228,31 @@ Enemy.prototype.step = function(dt ) {
   }
 }
 
+Enemy.prototype.hit = function ( damage) {
+	this.health -=damage;
+	if(this.health <= 0){
+		if(this.board.remove(this)){
+			this.board.add(new Explosion( this.x + this.w/2,
+			this.y + this.h/2 ));
+		}
+	}
+}
 
+//Explosion
+var Explosion = function( centerX, centerY) {
+	this.setup('explosion', {frame: 0 } );
+	this.x = centerX - this.w;
+	this.y = centerY - this.h;
+	this.subFrame = 0;
+
+};
+Explosion.prototype = new Sprite();
+Explosion.prototype.step = function ( dt) {
+	this.frame = Math.floor(this.subFrame++ / 3);
+	if(this.subFrame >= 36) {
+		this.board.remove(this);
+	}
+}
 
 
 /////start Game //////

@@ -1,4 +1,9 @@
 
+var OBJECT_PLAYER = 1,
+OBJECT_PLAYER_PROJECTILE = 2,
+OBJECT_ENEMY = 4,
+OBJECT_ENEMY_PROJECTILE = 8,
+OBJECT_POWERUP = 16;
 var sprites = {
 	ship : {
 			sx: 0,
@@ -153,9 +158,10 @@ var PlayerShip = function() {
 
 }
 PlayerShip.prototype = new Sprite();
+PlayerShip.prototype.type = OBJECT_PLAYER;
 
 var PlayerMissile = function(x, y) {
-	this.setup('missile', {vy: -700} );
+	this.setup('missile', {vy: -700, damage: 10 } );
 
 
 	this.x = x - this.w/2;
@@ -163,9 +169,15 @@ var PlayerMissile = function(x, y) {
 
 }
 PlayerMissile.prototype = new Sprite();
+PlayerMissile.prototype.type = OBJECT_PLAYER_PROJECTILE;
 PlayerMissile.prototype.step = function(dt ){
 	this.y += this.vy * dt;
-	if(this.y < -this.h) {
+
+	var collision = this.board.collide(this, OBJECT_ENEMY);
+	if(collision){
+		collision.hit(this.damage);
+	}
+	else if(this.y < -this.h) {
 		this.board.remove(this);
 	}
 }
@@ -188,6 +200,7 @@ var Enemy = function(blueprint, override) {
 } //end enemy
 
 Enemy.prototype = new Sprite();
+Enemy.prototype.type = OBJECT_ENEMY;
 Enemy.prototype.baseParameters = {A : 0, B: 0, C: 0, D: 0,
 											E: 0, F: 0, G: 0, H: 0 , t: 0};
 Enemy.prototype.step = function(dt ) {
@@ -196,6 +209,12 @@ Enemy.prototype.step = function(dt ) {
   this.vy = this.E + this.F * Math.sin(this.G * this.t + this.H);
   this.x += this.vx * dt;
   this.y += this.vy* dt;
+
+	var collision = this.board.collide(this, OBJECT_PLAYER);
+	if(collision) {
+		collision.hit(this.damage);
+		this.board.remove(this);
+	}
   if(this.y > Game.height || this.x < -this.w || this.x > Game.width ) {
   	this.board.remove(this);
   }

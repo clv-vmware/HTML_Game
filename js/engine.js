@@ -1,5 +1,24 @@
 //engine.js
 
+//reconstr sprite class
+var Sprite = function(sprite, props) {
+  this.psrite = sprite;
+  this.merge(props);
+  this.frame = this.frame || 0;
+  this.w = Spritesheet.map[sprite].w;
+  this.h = Spritesheet.map[sprite].h;
+}
+Sprite.prototype.merge = function( props) {
+  if(props) {
+    for(var prop in props){
+      this[prop] = props[prop];
+    }
+  }
+}
+Sprite.prototype.draw = function(ctx){
+  SpriteSheet.draw(ctx, this.sprite, this.x, this.y, this.frame);
+}
+// Spritesheet
  var SpriteSheet = new function() {
 	this.map = {};
 	this.load = function( spriteData, callback) {

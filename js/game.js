@@ -113,13 +113,13 @@ var Starfield =  function(speed, opacity, numStars, clear) {
 //playerShip
 
 var PlayerShip = function() {
-	this.w = SpriteSheet.map['ship'].w;
-	this.h = SpriteSheet.map['ship'].h;
+	this.setup('ship', {vx: 0, frame: 1, reloadTime: 0.25, maxVel: 200} );
+
 	this.x = Game.width/2 - this.w/2 ;
 	this.y = Game.height - 10 - this.h;
-	this.vx = 0;
 
-	this.reloadTime = 0.25;
+
+
 	this.reload = this.reloadTime;
 
 	this.step = function (dt) {
@@ -150,20 +150,19 @@ var PlayerShip = function() {
 				}
 			}
 	};
-	this.draw = function(ctx ) {
-      SpriteSheet.draw(ctx, 'ship', this.x, this.y, 1);
-	}
+
 }
+PlayerShip.prototype = new Sprite();
 
 var PlayerMissile = function(x, y) {
-	this.w = SpriteSheet.map['missile'].w;
-	this.h = SpriteSheet.map['missile'].h;
+	this.setup('missile', {vy: -700} );
+
 
 	this.x = x - this.w/2;
 	this.y = y - this.h;
-	this.vy =  -700;
-}
 
+}
+PlayerMissile.prototype = new Sprite();
 PlayerMissile.prototype.step = function(dt ){
 	this.y += this.vy * dt;
 	if(this.y < -this.h) {
@@ -171,9 +170,7 @@ PlayerMissile.prototype.step = function(dt ){
 	}
 }
 
-PlayerMissile.prototype.draw = function(ctx ){
-	SpriteSheet.draw(ctx, 'missile', this.x, this.y);
-}
+
 
 var playGame = function() {
 	var board = new GameBoard();
@@ -185,28 +182,18 @@ var playGame = function() {
 }
 
 var Enemy = function(blueprint, override) {
-  var baseParameters = {A : 0, B: 0, C: 0, D: 0,
-                        E: 0, F: 0, G: 0, H: 0 }
-  for(var prop in baseParameters) {
-  	this[prop] = baseParameters[prop];
-  } 
-  for(prop in blueprint) {
-  	this[prop] = blueprint[prop];
-  }
+	this.merge(this.baseParameters);
+	this.setup(blueprint.sprite, blueprint);
+	this.merge(override);
+} //end enemy
 
-  if(override) {
-  	for(prop in override) {
-  		this[prop] = override[prop];
-  	}
-  }
-  this.w = SpriteSheet.map[this.sprite].w;
-  this.h = SpriteSheet.map[this.sprite].h;
-  this.t = 0;
-}
+Enemy.prototype = new Sprite();
+Enemy.prototype.baseParameters = {A : 0, B: 0, C: 0, D: 0,
+											E: 0, F: 0, G: 0, H: 0 , t: 0};
 Enemy.prototype.step = function(dt ) {
   this.t += dt;
   this.vx = this.A + this.B * Math.sin(this.C * this.t + this.D);
-  this.vy = this.E + this.F * Math.sin(this.G * this.t + this.H); 
+  this.vy = this.E + this.F * Math.sin(this.G * this.t + this.H);
   this.x += this.vx * dt;
   this.y += this.vy* dt;
   if(this.y > Game.height || this.x < -this.w || this.x > Game.width ) {
@@ -214,9 +201,7 @@ Enemy.prototype.step = function(dt ) {
   }
 }
 
-Enemy.prototype.draw = function (ctx ) {
-	SpriteSheet.draw(ctx, this.sprite, this.x, this.y);
-}
+
 
 
 /////start Game //////

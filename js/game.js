@@ -115,7 +115,7 @@ wiggle: {
 step: {
 	x: 0,
 	y: -50,
-	sprite: 'enemy_ circle',
+	sprite: 'enemy_circle',
 	health: 10,
 	B: 300,
 	C: 1.5,

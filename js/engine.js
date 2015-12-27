@@ -37,14 +37,16 @@ Sprite.prototype.hit = function(damage ) {
 	this.draw = function(ctx, sprite, x, y, frame) {
       var s = this.map[sprite];
       if(!frame ) frame = 0;
-      ctx.drawImage(this.image, s.sx + frame*s.w ,
-      	                      s.sy,
-      	                      s.w,
-      	                      s.h,
-      	                      x, y,
-      	                      s.w, s.h);
+      ctx.drawImage(this.image,
+                    s.sx + frame*s.w ,
+      	            s.sy,
+      	            s.w,
+                    s.h,
+      	            x, y,
+      	            s.w,
+                    s.h);
 	};
-}
+};
 
 var Game = new function() {
 	this.initialize = function(canvasElementId, sprite_data, callback ) {
@@ -210,8 +212,10 @@ var Game = new function() {
      if(this.t > curShip[1]  ) {
        remove.push(curShip);
      }else if(curShip[0] < this.t) {
+
        var enemy = enemies[curShip[3]],
        override = curShip[4];
+       
        this.board.add(new Enemy(enemy, override) );
        curShip[0] += curShip[2];
      }

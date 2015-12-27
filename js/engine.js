@@ -60,6 +60,8 @@ var Game = new function() {
 
       this.setupInput();
 
+      this.setBoard(4, new TouchControls());
+
       this.loop();
 
       SpriteSheet.load(sprite_data, callback );
@@ -215,7 +217,7 @@ var Game = new function() {
 
        var enemy = enemies[curShip[3]],
        override = curShip[4];
-       
+
        this.board.add(new Enemy(enemy, override) );
        curShip[0] += curShip[2];
      }
@@ -235,5 +237,75 @@ var Game = new function() {
  }
 
  Level.prototype.draw = function(ctx) {
+
+ }
+
+ //TouchControls
+ var TouchControls = function() {
+   var gutterWidth = 0;
+   var unitWidth = 10;
+   var blockWidth = unitWidth - gutterWidth;
+
+   this.drawSquare = function( ctx, x, y, txt, on) {
+     ctx.globalAlpha = on ? 0.9: 0.6;
+     ctx.fillStyle = "#ccc";
+     ctx.fillRect(x, y, blockWidth, blockWidth);
+
+     ctx.fillStyle = "#fff";
+     ctx.textAlign = "center";
+     ctx.globalAlpha = 1.0;
+     ctx.font = "bold " + (3*unitWidth/4) + "px arial";
+
+     ctx.fillText(txt, x + blockWidth/2, y + 3*blockWidth/4 + 5);
+
+   };
+   this.draw = function(ctx ) {
+     ctx.save();
+     var yLoc = Game.height - unitWidth;
+
+     this.drawSquare(ctx, gutterWidth, yLoc, "\u25C0", Game.keys['left']);
+     this.drawSquare(ctx, unitWidth + gutterWidth, yLoc, "\u25B6", Game.keys['right']);
+     this.drawSquare(ctx, 4*unitWidth, yLoc, "A", Game.keys['fire']);
+
+     ctx.restore();
+   };
+   this.step = function(dt ) {
+
+   };
+   this.trackTouch = function(e ) {
+     var touch,x;
+     e.preventDefault();
+     Game.keys['left'] = false;
+     Game.keys['right'] = false;
+
+     for(var i = 0;i < targetTouches.length;i++) {
+       touch = e.targetTouches[i];
+       x = touch.pageX / Game.canvasMultiplier - Game.canvas.offsetLeft;
+       if(x < unitWidth) {
+         Game.keys['left'] = true;
+
+       }
+       if( x > unitWidth && x < 2 * unitWidth) {
+         Game.keys['right'] = true;
+       }
+     }//end for
+
+     if(e.type == 'touchstart' || e.type == 'touchend'){
+       for(i = 0;i < e.changedTouches.length;i++){
+         touch = e.changedTouches[i];
+         x = touch.pageX / Game.canvasMultiplier - Game.canvas.offsetLeft;
+         if(x > 4*unitWidth){
+           Game.keys['fire'] = (e.type == 'touchstart');
+         }
+       }
+     }
+
+   };
+
+   Game.canvas.addEventListener('touchstart', this.trackTouch, true );
+   Game.canvas.addEventListener('touchmove', this.trackTouch, true );
+   Game.canvas.addEventListener('touchend', this.trackTouch, true );
+
+   Game.playerOffset = unitWidth + 20;
 
  }

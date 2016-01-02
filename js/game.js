@@ -67,6 +67,14 @@ var sprites = {
 		w: 64,
 		h: 64,
 		frames: 12
+	},
+	enemy_missile: {
+		sx: 9,
+		sy: 42,
+		w: 3,
+		h: 20,
+		frames: 1
+
 	}
 }; // end sprites
 
@@ -76,7 +84,7 @@ var enemies = {
 	y : -50,
 	sprite : 'enemy_ship',
 	health: 10,
-
+  firePercentage: 0.001,
 
 	E: 100
 
@@ -88,7 +96,8 @@ ltr: {
 	health: 10,
 	B: 200,
 	C: 1,
-	E: 200
+	E: 200,
+	missiles: 2
 },
 circle: {
 	x: 400,
@@ -110,7 +119,9 @@ wiggle: {
 	health: 20,
 	B: 100,
 	C: 4,
-	E: 100
+	E: 100,
+	firePercentage : 0.001,
+	missiles: 2
 },
 step: {
 	x: 0,
@@ -280,7 +291,10 @@ var Enemy = function(blueprint, override) {
 Enemy.prototype = new Sprite();
 Enemy.prototype.type = OBJECT_ENEMY;
 Enemy.prototype.baseParameters = {A : 0, B: 0, C: 0, D: 0,
-											E: 0, F: 0, G: 0, H: 0 , t: 0};
+											E: 0, F: 0, G: 0, H: 0 , t: 0,
+										firePercentage: 0.01,
+									reloadTime: 0.75,
+								reload: 0};
 Enemy.prototype.step = function(dt ) {
   this.t += dt;
   this.vx = this.A + this.B * Math.sin(this.C * this.t + this.D);
@@ -293,6 +307,18 @@ Enemy.prototype.step = function(dt ) {
 		collision.hit(this.damage);
 		this.board.remove(this);
 	}
+
+	if(this.relaod <= 0 && Math.random() <this.firePercentage) {
+	  this.reload = this.reloadTime;
+		if(this.missiles == 2) {
+			this.board.add(new EnemyMissile(this.x + this.w-2 , this.y + this.h/2));
+			this.board.add(new EnemyMissile(this.x + 2, this.y + this.h / 2));
+
+		} else {
+			this.board.add(new EnemyMissile(this.x + this.w / 2, this.y + this.h));
+		}
+	}
+  this.reload -= dt;
   if(this.y > Game.height || this.x < -this.w || this.x > Game.width ) {
   	this.board.remove(this);
   }
@@ -308,7 +334,27 @@ Enemy.prototype.hit = function ( damage) {
 		}
 	}
 }
+// EnemyMissile
+var EnemyMissile = function ( x, y) {
+	this.setup('enemy_missile', {vy: 200, damage: 10 } );
+	this.x = x - this.w / 2;
+	this.y = y;
 
+};
+EnemyMissile.prototype = new Sprite();
+EnemyMissile.prototype.type = OBJECT_ENEMY_PROJECTILE;
+EnemyMissile.prototype.step = function (dt ) {
+	this.y += this.vy * dt;
+	var collision = this.board.collide(this, OBJECT_PLAYER);
+	if(collision) {
+		collision.hit(this.damage);
+		this.board.remove(this);
+
+
+	} else if(this.y > Game.height ) {
+		this.board.remove(this);
+	}
+}
 //Explosion
 var Explosion = function( centerX, centerY) {
 	this.setup('explosion', {frame: 0 } );

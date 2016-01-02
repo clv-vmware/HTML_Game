@@ -69,7 +69,7 @@ var Game = new function() {
       if(this.mobile ) {
         this.setBoard(4, new TouchControls());
       }
-      
+
       this.loop();
 
       SpriteSheet.load(sprite_data, callback );
@@ -284,6 +284,31 @@ var Game = new function() {
 
  Level.prototype.draw = function(ctx) {
 
+ }
+ //Game points
+ var GamePoints = function() {
+   Game.points = 0;
+   var pointsLength = 8;
+   this.draw = function(ctx ){
+     ctx.save();
+
+     ctx.font = "bold 18px arial";
+     ctx.fillStyle = "#ffffff";
+
+     var txt = "" + Game.points;
+
+     var i = pointsLength - txt.length, zeros = "";
+     while(i-- > 0) { zeros += "0"; }
+
+     ctx.fillText(zeros + txt, 10, 20);
+
+     ctx.restore();
+
+
+   }
+   this.step = function( dt) {
+
+   }
  }
 
  //TouchControls

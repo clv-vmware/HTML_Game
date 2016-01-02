@@ -261,6 +261,7 @@ var playGame = function() {
 	board.add(new PlayerShip());
 	board.add(new Level( level1, winGame ));
 	Game.setBoard(3, board);
+	Game.setBoard(5, new GamePoints(0));
 }
 var winGame = function() {
 	Game.setBoard(3, new TitleScreen("you win !", "press fire to play again ", playGame  ));
@@ -301,6 +302,7 @@ Enemy.prototype.hit = function ( damage) {
 	this.health -=damage;
 	if(this.health <= 0){
 		if(this.board.remove(this)){
+			Game.points += this.points || 100;
 			this.board.add(new Explosion( this.x + this.w/2,
 			this.y + this.h/2 ));
 		}

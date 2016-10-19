@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+.orig
+.vscode
+.swp
+.cache/
+npm-debug.log
+.idea/

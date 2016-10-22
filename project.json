@@ -13,6 +13,10 @@
 
     "jsList" : [
         "src/resource.js",
-        "src/app.js"
+        "src/app.js",
+        "src/Constant.js",
+        "src/Storage.js",
+        "src/GameUI.js",
+        "src/Candy.js"
     ]
 }

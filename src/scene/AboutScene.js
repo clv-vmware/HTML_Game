@@ -29,7 +29,7 @@ var AboutScene = cc.Scene.extend({
     },
 
     _back: function () {
-        Sound.playCoffee();
+        // Sound.playCoffee();
         cc.director.runScene(new MenuScene());
     }
 });

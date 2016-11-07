@@ -9,7 +9,7 @@ var MenuScene = cc.Scene.extend({
         this.addChild(layer);
 
         var winSize = cc.director.getWinSize();
-        var bgWelcome = cc.Sprite("res/graphics/bgWelcome.jpg");
+        var bgWelcome = new cc.Sprite("res/graphics/bgWelcome.jpg");
         bgWelcome.x = winSize.width / 2;
         bgWelcome.y = winSize.height / 2;
         layer.addChild(bgWelcome);
@@ -19,7 +19,7 @@ var MenuScene = cc.Scene.extend({
         title.y = 555;
         layer.addChild(title);
 
-        this._hero = new Sprite("#welcome_hero.png");
+        this._hero = new cc.Sprite("#welcome_hero.png");
         this._hero.x = -this._hero.width / 2;
         this._hero.y = 400;
         layer.addChild(this._hero);

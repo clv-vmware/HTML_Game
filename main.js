@@ -74,7 +74,7 @@ cc.game.onStart = function(){
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
         cc.spriteFrameCache.addSpriteFrames("res/graphics/texture.plist");
-        cc.director.runScene(new MenuScene());
+        cc.director.runScene(new AboutScene());
     }, this);
 };
 cc.game.run();

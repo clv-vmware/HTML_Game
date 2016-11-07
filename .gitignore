@@ -1,8 +1,10 @@
 node_modules/
 .DS_Store
 .orig
-.vscode
+.vscode/
 .swp
 .cache/
 npm-debug.log
 .idea/
+.mp3
+.png

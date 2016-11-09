@@ -15,21 +15,21 @@ Background.prototype.drawGrid = function (gridSize) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0;i < width; i += gridSize) {
-        drawLine(new Point(i, 0), new Point(i, height));
+        drawLine(new Vector(i, 0), new Vector(i, height));
         
 
     }
     for (var i = 0;i < width; i += gridSize) {
-        drawLine(new Point(0, i), new Point(width, i));
+        drawLine(new Vector(0, i), new Vector(width, i));
     }
 
 
 }
 
-function drawLine (startPoint, endPoint) {
+function drawLine (startVector, endVector) {
     ctx.beginPath();
-    ctx.moveTo(startPoint.x, startPoint.y);
-    ctx.lineTo(endPoint.x, endPoint.y);
+    ctx.moveTo(startVector.x, startVector.y);
+    ctx.lineTo(endVector.x, endVector.y);
     ctx.lineWidth = 0.1;
     ctx.strokeStyle = '#000000';
     ctx.stroke();

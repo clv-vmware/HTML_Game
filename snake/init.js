@@ -12,6 +12,8 @@ var then = Date.now();
 var interval = 1000/fps;
 var delta;
 
+var runningFlag = true;
+
 // DRAW SNAKE
 var s = new Snake();
 
@@ -41,6 +43,16 @@ window.addEventListener('keydown', function (event) {
     } 
 });
 
+var pauseBtn = document.querySelector("#pause");
+pauseBtn.addEventListener('click', function () {
+    runningFlag = false;
+});
+
+var runBtn = document.querySelector("#run");
+runBtn.addEventListener('click', function () {
+    runningFlag = true;
+    loop();
+});
 
 function loop () {
     queue();
@@ -60,7 +72,7 @@ function draw () {
 }
 
 function queue () {
-    window.requestAnimationFrame(loop);
+    if (runningFlag) window.requestAnimationFrame(loop);
     now = Date.now();
     delta = now - then;
     if (delta > interval) {

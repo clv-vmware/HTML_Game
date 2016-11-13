@@ -10,4 +10,28 @@ function getRandomPosition (fromNum, toNum) {
     return new Vector(roundX, roundY);
 }
 
+function detectCollision (pos1, pos2, gridSize) {
+
+    var nResult = false;
+
+
+    var rec1Left = pos1.x;
+    var rec1Right = pos1.x + gridSize;
+    var rec2Left = pos2.x;
+    var rec2Right = pos2.x + gridSize;
+    var rec1Top = pos1.y;
+    var rec2Top = pos2.y;
+    var rec1Bottom = pos1.y + gridSize;
+    var rec2Bottom = pos2.y + gridSize;
+
+    if (rec1Right > rec2Left && rec1Left < rec2Right) {
+        if (rec1Bottom > rec2Top && rec1Top < rec2Bottom) {
+            nResult = true;
+        }
+    }
+
+    return nResult;
+    
+}
+
 

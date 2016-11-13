@@ -11,6 +11,7 @@ s.setVelocity(velocity);
 var obstacle = new Egg();
 
 
+
 // set V
 
 window.addEventListener('keydown', function (event) {
@@ -55,6 +56,7 @@ function update() {
 function draw () {
     s.draw();
     obstacle.draw();
+    obstacle.checkCollision();
 }
 
 function queue () {

@@ -13,6 +13,7 @@ var interval = 1000/fps;
 var delta;
 
 var runningFlag = true;
+var score = 0;
 
 // DRAW SNAKE
 var s = new Snake();
@@ -54,6 +55,7 @@ runBtn.addEventListener('click', function () {
     loop();
 });
 
+
 function loop () {
     queue();
 }
@@ -68,7 +70,8 @@ function update() {
 function draw () {
     s.draw();
     obstacle.draw();
-    obstacle.checkCollision();
+    var ifHit = obstacle.checkCollision();
+    
 }
 
 function queue () {

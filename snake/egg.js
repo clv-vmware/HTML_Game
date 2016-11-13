@@ -19,11 +19,19 @@ Egg.prototype.checkCollision = function () {
         this.clear();
         this.position = getRandomPosition(100, 400);
         this.draw();
+        score++;
+        updateScore();
     }
-    
+
+    return ifHit;
 }
 
 Egg.prototype.clear = function () {
     ctx.clearRect(this.position.x, this.position.y, this.eggSize, this.eggSize);
     
+}
+
+function updateScore () {
+    var scoreBtn = document.querySelector("#score");
+    scoreBtn.innerHTML = score;
 }

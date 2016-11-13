@@ -13,7 +13,6 @@ var interval = 1000/fps;
 var delta;
 
 // DRAW SNAKE
-console.log(document);
 var s = new Snake();
 
 var absoluteV = 30;
@@ -22,14 +21,7 @@ s.setVelocity(new Vector(absoluteV, 0));
 
 var obstacle = new Egg();
 
-
-
-// set V
-
 window.addEventListener('keydown', function (event) {
-    // event.stopPropagation();
-    // event.preventDefault();
-    console.log('hahah', event, canvas);
 
     if (event.key === 'ArrowUp') {
         velocity = new Vector(0, -absoluteV);
@@ -51,8 +43,6 @@ window.addEventListener('keydown', function (event) {
 
 
 function loop () {
-    
-    // draw();
     queue();
 }
 
@@ -65,8 +55,8 @@ function update() {
 
 function draw () {
     s.draw();
-    // obstacle.draw();
-    // obstacle.checkCollision();
+    obstacle.draw();
+    obstacle.checkCollision();
 }
 
 function queue () {
@@ -79,8 +69,6 @@ function queue () {
         update();
         draw();
     }
-    
-    
 }
 
 loop();

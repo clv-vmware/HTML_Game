@@ -8,8 +8,8 @@ var GameOverUI = cc.Layer.extend({
     _scoreText:null,
     _gameScene:null,
 
-    ctor: function () {
-        this._super(gameScene);
+    ctor: function (gameScene) {
+        this._super();
         this._gameScene = gameScene;
 
         var winSize = cc.director.getWinSize();
@@ -37,7 +37,32 @@ var GameOverUI = cc.Layer.extend({
     init:function(){
         this._distanceText.setString("DISTANCE TRAVELLED: " + parseInt(Game.user.distance));
         this._scoreText.setString("SCORE: " + Game.user.score);
+
+        var replayBtn = new cc.MenuItemImage("#gameOver_playAgainButton.png", "#gameOver_playAgainButton.png", this._replay.bind(this));
+
+        var aboutBtn = new cc.MenuItemImage("#gameOver_aboutButton.png", "#gameOver_aboutButton.png", this._about.bind(this));
+
+        var mainBtn = new cc.MenuItemImage("#gameOver_mainButton.png", "#gameOver_mainButton.png", this._return);
+
+        var menu = new cc.Menu(replayBtn, mainBtn, aboutBtn);
+        menu.alignItemsVertically();
+        this.addChild(menu);
+        menu.y = winSize.height / 2 - 100;
+
+
     },
+    
+    _replay: function () {
+        this._gameScene.init();
+    },
+    
+    _about: function () {
+        cc.director.runScene(new AboutScene());
+    },
+    
+    _return: function () {
+        cc.director.runScene(new MenuScene());
+    }
 
 
 })

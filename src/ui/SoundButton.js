@@ -12,7 +12,7 @@ var SoundButton = cc.MenuItemToggle.extend({
 
         animation.setDelayPerUnit(1/3);
         var action = cc.animate(animation).repeatForever();
-        sprite.runAction(animation);
+        sprite.runAction(action);
 
         this._super(new cc.MenuItemSprite(sprite, null, null), new cc.MenuItemImage("#soundOff.png"));
         this.setCallback(this._soundOnOff, this);

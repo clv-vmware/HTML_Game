@@ -3,10 +3,40 @@
 // bg.drawGrid(GRID_SIZE);
 
 // DRAW SNAKE
+console.log(document);
 var s = new Snake();
-s.draw();
+s.setVelocity(velocity);
 
-s.setVelocity(new Vector(2, 2));
+
+var obstacle = new Egg();
+
+
+// set V
+
+window.addEventListener('keydown', function (event) {
+    // event.stopPropagation();
+    // event.preventDefault();
+    console.log('hahah', event, canvas);
+
+    if (event.key === 'ArrowUp') {
+        velocity = new Vector(0, -2);
+        s.setVelocity(velocity);
+    }
+    else if(event.key === 'ArrowDown') {
+        velocity = new Vector(0, 2);
+        s.setVelocity(velocity);
+    }
+    else if(event.key === 'ArrowLeft') {
+        velocity = new Vector(-2, 0);
+        s.setVelocity(velocity);
+    }
+    else if(event.key === 'ArrowRight') {
+        velocity = new Vector(2, 0);
+        s.setVelocity(velocity);
+    } 
+});
+
+
 function loop () {
     clear();
     update();
@@ -24,10 +54,11 @@ function update() {
 
 function draw () {
     s.draw();
+    obstacle.draw();
 }
 
 function queue () {
-    window.requestAnimationFrame(loop);
+    // window.requestAnimationFrame(loop);
 }
 
 loop();

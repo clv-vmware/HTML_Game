@@ -29,9 +29,16 @@ function detectCollision (pos1, pos2, gridSize) {
             nResult = true;
         }
     }
-
     return nResult;
-    
+}
+
+function drawCell (color, pos, size) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.fillRect(pos.x, pos.y, size, size);
+    // console.log('in draw', this.position);
+    ctx.closePath();
+    ctx.fill();
 }
 
 

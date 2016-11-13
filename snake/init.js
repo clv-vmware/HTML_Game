@@ -60,7 +60,7 @@ function draw () {
 }
 
 function queue () {
-    // window.requestAnimationFrame(loop);
+    window.requestAnimationFrame(loop);
     now = Date.now();
     delta = now - then;
     if (delta > interval) {

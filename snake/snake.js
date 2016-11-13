@@ -3,8 +3,6 @@ function Snake () {
     
     this.bodyPos = new Vector(this.headPos.x - GRID_SIZE, this.headPos.y);
     this.tailPos = new Vector(this.bodyPos.x - GRID_SIZE, this.bodyPos.y);
-    console.log('head pos ', this.headPos);
-    console.log('body pos ', this.bodyPos, this.tailPos);
 
     this.snakeSize = GRID_SIZE;
     this.velocity;
@@ -27,14 +25,10 @@ Snake.prototype.move = function () {
     this.bodyPos = new Vector(this.headPos.x, this.headPos.y);
     
     this.headPos = oldHeadPos.add.call(oldHeadPos, this.velocity);
-    console.log('head pos ', this.headPos, this.velocity);
-    console.log('body pos ', this.bodyPos, this.tailPos);
-    // console.log(this.position, width, this.velocity);
 
     // BOUNDRY DETECT
     if (this.headPos.x + GRID_SIZE > width) {
         this.setVelocity(new Vector(-this.velocity.x, this.velocity.y));
-        console.log('in  > ', this.velocity);
         this.headPos.x = width - GRID_SIZE;
     }
 
@@ -55,7 +49,6 @@ Snake.prototype.move = function () {
 }
 
 Snake.prototype.draw = function () {
-    
 
     drawCell('rgb(0,0,255)', this.headPos, GRID_SIZE); 
     drawCell('rgb(0,255,255)', this.bodyPos, GRID_SIZE);

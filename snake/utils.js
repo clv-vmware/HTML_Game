@@ -41,4 +41,11 @@ function drawCell (color, pos, size) {
     ctx.fill();
 }
 
+function drawRoundCornerRect (pos, height, width, radius, color) {
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineTo(pos.x + width - radius, pos.y);
+    ctx.arc
+}
+
 

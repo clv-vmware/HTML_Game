@@ -7,19 +7,45 @@
                 overflow: hidden;
             }
             canvas {
-                background: #ccc;
+                background: #aacc99;
                 height: 500px;
             }
             #score {
                 display: inline-block;
             }
+
+            #gameScene {
+                display: none;
+            }
+            .title {
+                text-align: center;
+            }
+            .level {
+                display: inline-block;
+                width: 25%;
+                margin: 2rem;
+            }
+
+
         </style>
     </head>
     <body>
-        <canvas></canvas>
-        <input type="button" id="pause" value="pause"/>
-        <input type="button" id="run" value="run"/>
-        <div id="score"></div>
+
+        <div id="index">
+            <h2 class="title">snake </h2>
+            <div id="levelsContainer">
+                <div class="level" id="slug">slug</div>
+                <div class="level" id="worm">worm</div>
+                <div class="level" id="python">python</div>
+            </div>
+            <div>high scores</div>
+        </div>
+        <div id="gameScene">
+            <canvas></canvas>
+            <input type="button" id="pause" value="pause"/>
+            <input type="button" id="run" value="run"/>
+            <div id="score"></div>
+        </div>
         <script src="./utils.js"></script>
         <script src="./EventUtil.js"></script>
         <script src="./vector.js"></script>

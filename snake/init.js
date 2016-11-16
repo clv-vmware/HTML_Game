@@ -33,6 +33,14 @@ function runGameScene () {
 // var bg = new Background();
 // bg.drawGrid(GRID_SIZE);
 
+
+// GLOBAL VARIABLE
+var canvas = document.querySelector('#gameScene canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight;
+var GRID_SIZE = 30;
+var velocity = new Vector(0, 0);
 /**
  * CONTROL FPS
  */
@@ -51,13 +59,13 @@ var RIGHT_ARROW = 39;
 var DOWN_ARROW = 40;
 
 // DRAW SNAKE
-var s = new Snake();
+var s = new Snake(ctx);
 
 var absoluteV = 30;
 s.setVelocity(new Vector(absoluteV, 0));
 
 
-var obstacle = new Egg();
+var obstacle = new Egg(ctx);
 console.log('haahh');
 EventUtil.addHandler(window, 'keydown', function (event) {
     console.log(event);
@@ -106,8 +114,8 @@ function update() {
 
 function draw () {
     s.draw();
-    obstacle.draw(ctx);
-    var ifHit = obstacle.checkCollision(ctx);
+    obstacle.draw();
+    var ifHit = obstacle.checkCollision();
 }
 
 function queue () {

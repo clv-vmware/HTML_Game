@@ -1,6 +1,8 @@
 function Snake (ctx) {
     this.ctx = ctx;
-    this.headPos = getRandomPosition(100, 300);
+    this.width = ctx.canvas.clientWidth;
+    this.height = ctx.canvas.clientHeight;
+    this.headPos = getRandomPosition(10, 100);
     
     this.bodyPos = new Vector(this.headPos.x - GRID_SIZE, this.headPos.y);
     this.tailPos = new Vector(this.bodyPos.x - GRID_SIZE, this.bodyPos.y);

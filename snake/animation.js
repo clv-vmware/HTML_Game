@@ -1,13 +1,18 @@
+(function () {
+
 var can = document.querySelector("#slugAnimation");
+var width = can.width;
+var height = can.height;
+
+
 var slugCtx = can.getContext('2d');
 
-var snakeAnimation = new Snake();
+var snakeAnimation = new Snake(slugCtx);
 snakeAnimation.setVelocity(new Vector(0.1, 0.1));
 
 
-
 function clear() {
-    ctx.clearRect(0, 0, width, height);
+    slugCtx.clearRect(0, 0, width, height);
 }
 
 function update() {
@@ -16,12 +21,11 @@ function update() {
 
 function draw () {
     snakeAnimation.draw();
-    obstacle.draw(ctx);
-    var ifHit = obstacle.checkCollision(ctx);
+    
 }
 
 function loop () {
-    if (runningFlag) window.requestAnimationFrame(loop);
+    window.requestAnimationFrame(loop);
     now = Date.now();
     delta = now - then;
     if (delta > interval) {
@@ -33,3 +37,5 @@ function loop () {
 }
 
 loop();
+
+})();

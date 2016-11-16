@@ -6,7 +6,7 @@
                 margin: 0;
                 overflow: hidden;
             }
-            canvas {
+            #gameScene canvas {
                 background: #aacc99;
                 height: 500px;
             }
@@ -24,6 +24,11 @@
                 display: inline-block;
                 width: 25%;
                 margin: 2rem;
+                
+            }
+            .level canvas {
+                background: #aacc99;
+               
             }
 
 
@@ -34,9 +39,18 @@
         <div id="index">
             <h2 class="title">snake </h2>
             <div id="levelsContainer">
-                <div class="level" id="slug">slug</div>
-                <div class="level" id="worm">worm</div>
-                <div class="level" id="python">python</div>
+                <div class="level" id="slug">
+                    <canvas id="slugAnimation"></canvas>
+                    <p>slug</p>
+                </div>
+                <div class="level" id="worm">
+                    <canvas id="wormAnimation"></canvas>
+                    <p>worm</p>
+                </div>
+                <div class="level" id="python">
+                    <canvas id="pythonAnimation"></canvas>
+                    <p>python</p>
+                </div>
             </div>
             <div>high scores</div>
         </div>

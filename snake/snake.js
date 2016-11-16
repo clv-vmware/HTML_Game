@@ -1,4 +1,5 @@
-function Snake () {
+function Snake (ctx) {
+    this.ctx = ctx;
     this.headPos = getRandomPosition(100, 300);
     
     this.bodyPos = new Vector(this.headPos.x - GRID_SIZE, this.headPos.y);
@@ -50,9 +51,9 @@ Snake.prototype.move = function () {
 
 Snake.prototype.draw = function () {
 
-    drawCell('rgb(0,0,255)', this.headPos, GRID_SIZE); 
-    drawCell('rgb(0,255,255)', this.bodyPos, GRID_SIZE);
-    drawCell('rgb(222, 255, 0)', this.tailPos, GRID_SIZE);
+    drawCell(this.ctx, 'rgb(0,0,255)', this.headPos, GRID_SIZE); 
+    drawCell(this.ctx, 'rgb(0,255,255)', this.bodyPos, GRID_SIZE);
+    drawCell(this.ctx, 'rgb(222, 255, 0)', this.tailPos, GRID_SIZE);
 
 }
 

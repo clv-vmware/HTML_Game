@@ -14,7 +14,6 @@ function detectCollision (pos1, pos2, gridSize) {
 
     var nResult = false;
 
-
     var rec1Left = pos1.x;
     var rec1Right = pos1.x + gridSize;
     var rec2Left = pos2.x;
@@ -32,19 +31,19 @@ function detectCollision (pos1, pos2, gridSize) {
     return nResult;
 }
 
-function drawCell (color, pos, size) {
+function drawCell (ctx, color, pos, size) {
     ctx.fillStyle = color;
     ctx.beginPath();
     // ctx.fillRect(pos.x, pos.y, size, size);
-    drawRoundedRect ('#272727', '#272727', pos.x, pos.y, size, size, 10)
+    drawRoundedRect (ctx, '#272727', '#272727', pos.x, pos.y, size, size, 10)
     // console.log('in draw', this.position);
     ctx.closePath();
     ctx.fill();
 }
 
-function drawRoundedRect (strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
+function drawRoundedRect (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
     ctx.beginPath();
-    roundedRect (cornerX, cornerY, width, height, cornerRadius);
+    roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
     ctx.strokeStyle = strokeStyle;
     // ctx.shadowColor = "RGBA(127,127,127,1)";
 
@@ -57,7 +56,7 @@ function drawRoundedRect (strokeStyle, fillStyle, cornerX, cornerY, width, heigh
     ctx.fill();
 }
 
-function roundedRect (cornerX, cornerY, width, height, cornerRadius) {
+function roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius) {
     if (width > 0) {
         ctx.moveTo(cornerX + cornerRadius, cornerY);
     }

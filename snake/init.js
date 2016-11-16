@@ -3,6 +3,7 @@ var slug = document.querySelector("#slug");
 var worm = document.querySelector("#worm");
 var python = document.querySelector("#python");
 
+
 EventUtil.addHandler(slug, 'click', selectLevel);
 EventUtil.addHandler(worm, 'click', selectLevel);
 EventUtil.addHandler(python, 'click', selectLevel);
@@ -19,23 +20,12 @@ function selectLevel (e) {
 }
 
 function runGameScene () {
+    var index = document.querySelector("#index");
+    index.style.display = "none";
 
+    var gameScene = document.querySelector("#gameScene");
+    gameScene.style.display = "inherit";
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -109,15 +99,15 @@ function loop () {
 function clear() {
     ctx.clearRect(0, 0, width, height);
 }
+
 function update() {
     s.move();
 }
 
 function draw () {
     s.draw();
-    obstacle.draw();
-    var ifHit = obstacle.checkCollision();
-    
+    obstacle.draw(ctx);
+    var ifHit = obstacle.checkCollision(ctx);
 }
 
 function queue () {

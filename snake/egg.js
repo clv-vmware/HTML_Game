@@ -1,16 +1,17 @@
-function Egg () {
+function Egg (ctx) {
+    this.ctx = ctx;
     this.position = getRandomPosition(100, 400);
     this.eggSize = GRID_SIZE;
 
 }
 
 Egg.prototype.draw = function () {
-    ctx.fillStyle = 'rgb(255,0,0)';
-    ctx.beginPath();
-    ctx.fillRect(this.position.x, this.position.y, this.eggSize, this.eggSize);
+    this.ctx.fillStyle = 'rgb(255,0,0)';
+    this.ctx.beginPath();
+    this.ctx.fillRect(this.position.x, this.position.y, this.eggSize, this.eggSize);
     // console.log('in  egg  draw', this.position, this.eggSize);
-    ctx.closePath();
-    ctx.fill();
+    this.ctx.closePath();
+    this.ctx.fill();
 }
 
 Egg.prototype.checkCollision = function () {
@@ -27,8 +28,7 @@ Egg.prototype.checkCollision = function () {
 }
 
 Egg.prototype.clear = function () {
-    ctx.clearRect(this.position.x, this.position.y, this.eggSize, this.eggSize);
-    
+    this.ctx.clearRect(this.position.x, this.position.y, this.eggSize, this.eggSize);
 }
 
 function updateScore () {

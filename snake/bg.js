@@ -1,10 +1,4 @@
-// GLOBAL VARIABLE
-var canvas = document.querySelector('#gameScene canvas');
-var ctx = canvas.getContext('2d');
-var width = canvas.width = window.innerWidth;
-var height = canvas.height = window.innerHeight;
-var GRID_SIZE = 30;
-var velocity = new Vector(0, 0);
+
 
 
 

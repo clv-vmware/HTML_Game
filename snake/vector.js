@@ -1,20 +1,25 @@
-function Vector (x, y) {
+var vector = {
+ Vector : function (x, y) {
     this.x = x || 0;
     this.y = y || 0;
-}
+},
 
-Vector.prototype.add = function (vector) {
+add : function (vector) {
     this.x += vector.x;
     this.y += vector.y;
 
     return new Vector(this.x, this.y);
-}
+},
 
-Vector.prototype.minus = function (vector) {
+minus : function (vector) {
     this.x -= vector.x;
     this.y -= vector.y;
-}
+},
 
-Vector.prototype.getMagnitude = function () {
+getMagnitude : function () {
     return Math.sqrt(x * x + y * y);
 }
+
+}
+
+module.exports = vector;

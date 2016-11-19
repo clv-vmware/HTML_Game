@@ -1,16 +1,23 @@
 /**
  * generate random position based on grid
  */
-function getRandomPosition (fromNum, toNum) {
+
+
+var vector = require('./vector');
+
+var GRID_SIZE = 30;
+var Utils = {
+    GRID_SIZE : 30,
+ getRandomPosition: function (fromNum, toNum) {
     var x = fromNum + Math.random() * (toNum - fromNum);
     var y = fromNum + Math.random() * (toNum - fromNum);
 
     var roundX = x - x % (GRID_SIZE + 0.1);
     var roundY = y - y % (GRID_SIZE + 0.1);
-    return new Vector(roundX, roundY);
-}
+    return new vector.Vector(roundX, roundY);
+},
 
-function detectCollision (pos1, pos2, gridSize) {
+ detectCollision : function (pos1, pos2, gridSize) {
 
     var nResult = false;
 
@@ -29,21 +36,23 @@ function detectCollision (pos1, pos2, gridSize) {
         }
     }
     return nResult;
-}
+},
 
-function drawCell (ctx, color, pos, size) {
+ drawCell : function(ctx, color, pos, size) {
+     
     ctx.fillStyle = color;
     ctx.beginPath();
     // ctx.fillRect(pos.x, pos.y, size, size);
-    drawRoundedRect (ctx, '#272727', '#272727', pos.x, pos.y, size, size, 10)
+    this.drawRoundedRect (ctx, '#272727', '#272727', pos.x, pos.y, size, size, 10)
     // console.log('in draw', this.position);
     ctx.closePath();
     ctx.fill();
-}
+},
 
-function drawRoundedRect (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
+ drawRoundedRect : function (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
+     console.log('in drawCell', ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius);
     ctx.beginPath();
-    roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
+    this.roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
     ctx.strokeStyle = strokeStyle;
     // ctx.shadowColor = "RGBA(127,127,127,1)";
 
@@ -54,9 +63,9 @@ function drawRoundedRect (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, 
 
     ctx.stroke();
     ctx.fill();
-}
+},
 
-function roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius) {
+ roundedRect : function (ctx, cornerX, cornerY, width, height, cornerRadius) {
     if (width > 0) {
         ctx.moveTo(cornerX + cornerRadius, cornerY);
     }
@@ -75,5 +84,9 @@ function roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius) {
         ctx.arcTo(cornerX, cornerY, cornerX - cornerRadius, cornerY, cornerRadius);
     }
 }
+
+}
+
+module.exports = Utils;
 
 

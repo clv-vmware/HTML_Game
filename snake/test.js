@@ -9,6 +9,5 @@ var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
 
 var s = new snake.Snake(ctx);
-console.log(s.draw);
 
 s.draw();

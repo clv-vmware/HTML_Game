@@ -20,3 +20,5 @@ var EventUtil = {
         }
     }
 }
+
+module.exports = EventUtil;

@@ -3,17 +3,9 @@
 // bg.drawGrid(GRID_SIZE);
 
 var Snake = require('./snake');
-
-
-// GLOBAL VARIABLE
-var canvas = document.querySelector('#gameScene canvas');
-var ctx = canvas.getContext('2d');
-var width = canvas.width = window.innerWidth;
-var height = canvas.height = window.innerHeight;
-
-/**
- * CONTROL FPS
- */
+var Egg = require('./egg');
+var EventUtil = require('./EventUtil');
+var Vector = require('./vector');
 
 var fps = 10;
 var now;
@@ -23,73 +15,87 @@ var delta;
 
 var runningFlag = true;
 var score = 0;
+
+var absoluteV = 30;
+
 var LEFT_ARROW = 37;
 var UP_ARROW = 38;
 var RIGHT_ARROW = 39;
 var DOWN_ARROW = 40;
 
+// GLOBAL VARIABLE
+var canvas = document.querySelector('#gameScene canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width;
+var height = canvas.height;
+
 // DRAW SNAKE
-var s = new Snake(ctx);
-
-var absoluteV = 30;
-s.setVelocity(new Vector(absoluteV, 0));
-
-
+var snake = new Snake(ctx, width, height);
+snake.setVelocity(new Vector(absoluteV, 0));
 var obstacle = new Egg(ctx);
-console.log('haahh');
-EventUtil.addHandler(window, 'keydown', function (event) {
-    console.log(event);
+        
+var gameScene = {
 
-    if (event.keyCode === UP_ARROW) {
-        velocity = new Vector(0, -absoluteV);
-        s.setVelocity(velocity);
+    init: function () {
+        queue();
+        initButtons();
+        listenKeyBoardEvent();
     }
-    else if(event.keyCode === DOWN_ARROW) {
-        velocity = new Vector(0, absoluteV);
-        s.setVelocity(velocity);
-    }
-    else if(event.keyCode === LEFT_ARROW) {
-        velocity = new Vector(-absoluteV, 0);
-        s.setVelocity(velocity);
-    }
-    else if(event.keyCode === RIGHT_ARROW) {
-        velocity = new Vector(absoluteV, 0);
-        s.setVelocity(velocity);
-    } 
-});
-
-var pauseBtn = document.querySelector("#pause");
-EventUtil.addHandler(pauseBtn, 'click', function () {
-    runningFlag = false;
-});
-
-var runBtn = document.querySelector("#run");
-EventUtil.addHandler(runBtn, 'click', function () {
-    runningFlag = true;
-    loop();
-});
-
-
-function loop () {
-    queue();
 }
 
-function clear() {
+function initButtons () {
+    var pauseBtn = document.querySelector("#pause");
+    EventUtil.addHandler(pauseBtn, 'click', function () {
+        runningFlag = false;
+    });
+
+    var runBtn = document.querySelector("#run");
+    
+    EventUtil.addHandler(runBtn, 'click', function () {
+        runningFlag = true;
+        queue();
+    });
+}
+
+function listenKeyBoardEvent () {
+    EventUtil.addHandler(window, 'keydown', function (event) {
+
+        if (event.keyCode === UP_ARROW) {
+            velocity = new Vector(0, -absoluteV);
+            snake.setVelocity(velocity);
+        }
+        else if(event.keyCode === DOWN_ARROW) {
+            velocity = new Vector(0, absoluteV);
+            snake.setVelocity(velocity);
+        }
+        else if(event.keyCode === LEFT_ARROW) {
+            velocity = new Vector(-absoluteV, 0);
+            snake.setVelocity(velocity);
+        }
+        else if(event.keyCode === RIGHT_ARROW) {
+            velocity = new Vector(absoluteV, 0);
+            snake.setVelocity(velocity);
+        } 
+    });
+};
+
+function clear () {
     ctx.clearRect(0, 0, width, height);
-}
+};
 
-function update() {
-    s.move();
-}
+function update () {
+    snake.move();
+};
 
 function draw () {
-    s.draw();
+    snake.draw();
     obstacle.draw();
-    var ifHit = obstacle.checkCollision();
-}
+    var ifHit = obstacle.checkCollision(snake);
+};
 
 function queue () {
-    if (runningFlag) window.requestAnimationFrame(loop);
+    
+    if (runningFlag) window.requestAnimationFrame(queue);
     now = Date.now();
     delta = now - then;
     if (delta > interval) {
@@ -98,6 +104,6 @@ function queue () {
         update();
         draw();
     }
-}
+};
 
-loop();
+module.exports = gameScene;

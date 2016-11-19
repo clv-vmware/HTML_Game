@@ -3,7 +3,7 @@
  */
 
 
-var vector = require('./vector');
+var Vector = require('./vector');
 
 var GRID_SIZE = 30;
 var Utils = {
@@ -14,7 +14,7 @@ var Utils = {
 
     var roundX = x - x % (GRID_SIZE + 0.1);
     var roundY = y - y % (GRID_SIZE + 0.1);
-    return new vector.Vector(roundX, roundY);
+    return new Vector(roundX, roundY);
 },
 
  detectCollision : function (pos1, pos2, gridSize) {
@@ -50,7 +50,7 @@ var Utils = {
 },
 
  drawRoundedRect : function (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
-     console.log('in drawCell', ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius);
+    // console.log('in drawCell', ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius);
     ctx.beginPath();
     this.roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
     ctx.strokeStyle = strokeStyle;

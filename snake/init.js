@@ -1,5 +1,9 @@
 var GRID_SIZE = 30;
-var velocity = new Vector(0, 0);
+// var velocity = new Vector(0, 0);
+
+var Snake = require('./snake');
+var GameScene = require('./gameScene');
+var EventUtil = require('./EventUtil');
 
 // index page: select level
 var slug = document.querySelector("#slug");
@@ -17,7 +21,6 @@ var level;
 
 
 function selectLevel (e) {
-    console.log(e.target.id);
     level = e.target.id;
     runGameScene();
 }
@@ -28,6 +31,7 @@ function runGameScene () {
 
     var gameScene = document.querySelector("#gameScene");
     gameScene.style.display = "inherit";
+    GameScene.init();
 }
 
 

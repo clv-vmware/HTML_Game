@@ -14,7 +14,7 @@ Egg.prototype.draw = function () {
     this.ctx.fillStyle = 'rgb(255,0,0)';
     this.ctx.beginPath();
     var img = new Image();
-    img.src='./res/img/obstacle.png';
+    img.src='./res/img/cross.png';
     this.ctx.drawImage(img, this.position.x, this.position.y, this.eggSize, this.eggSize);
     
     // this.ctx.fillRect(this.position.x, this.position.y, this.eggSize, this.eggSize);

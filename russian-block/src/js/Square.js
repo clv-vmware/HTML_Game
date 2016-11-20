@@ -16,6 +16,11 @@ Square.prototype = {
     draw : function (ctx) {
         PaintUtils.drawCell(ctx, '#ccc', this.pos, this.size);
     },
+
+    move: function (v) {
+        this.pos = this.pos.add(v);
+
+    }
 }
 
 module.exports = Square;

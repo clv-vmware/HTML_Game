@@ -63,6 +63,6 @@ var PaintUtils = {
         }
     }
 
-};
+}
 
 module.exports = PaintUtils;

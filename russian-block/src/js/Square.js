@@ -20,6 +20,12 @@ Square.prototype = {
     move: function (v) {
         this.pos = this.pos.add(v);
 
+        return this.pos;
+
+    },
+
+    getPosition: function () {
+        return this.pos;
     }
 }
 

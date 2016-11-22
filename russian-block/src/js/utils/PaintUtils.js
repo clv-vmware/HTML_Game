@@ -65,8 +65,8 @@ var PaintUtils = {
 
     isInBoundry: function (pos) {
         var flag = true;
-        if (pos.x < 0 || pos.x > Constants.GAMESCENE_WIDTH) flag = false;
-        if (pos.y < 0 || pos.x > Constants.GAMESCENE_HEIGHT) flag = false;
+        if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
+        if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
 
         return flag;
     } 

@@ -2,14 +2,15 @@ var Vector = require('./Vector');
 var Square = require('./Square');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
+var PrintUtils = require('./utils/PrintUtils');
 var Constants = require('./Constants');
 
 
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
-var square = new Square(new Vector(2, 2));
+var square = new Square(new Vector(0, 0));
 
-var velocity = new Vector(0, 10);
+var velocity = new Vector(0, 30);
 
 
 
@@ -35,17 +36,22 @@ GameScene.prototype = {
         return blockMap;
     },
 
+    createSquare: function () {
+        square = new Square(new Vector(0, 0));
+    },
+
     updateBlockMap: function (pos) {
-        // 如果碰到stack 
-        // decide the pos belon to the blockmap i j
+        // 检查 pos 和 现有堆积的squares 的连通性
+        
+
         var j = Math.floor(pos.x / 30);
         var i = Math.floor(pos.y / 30);
-        console.log(i, j);
-        this.blockMap[j][i] = true;
+        // console.log(i, j);
+        this.blockMap[i][j] = true;
+        PrintUtils.printColInMatrix(this.blockMap, 0);
 
-        for (var i = 0;i < 17; i++) {
-            console.log(this.blockMap[i]);
-        }
+        this.createSquare();
+        
     },
 
     draw: function (ctx) {
@@ -55,8 +61,9 @@ GameScene.prototype = {
             var xlen = this.blockMap[0].length;
             
             for (var j = 0;j < xlen; j++) {
-                var square = new Square(new Vector(i * 30, j * 30));
+                var square = new Square(new Vector(j * 30, i * 30));
                 if (this.blockMap[i][j]) {
+                    // console.log('draw gameScene', i, j, square.getPosition());
                     square.draw(ctx);
                 }
             }
@@ -69,7 +76,7 @@ GameScene.prototype = {
 
 var gameScene = new GameScene();
 
-var fps = 5;
+var fps = 1;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -94,17 +101,27 @@ function clear() {
 
 function update () {
     
-    
-    if (PaintUtils.isInBoundry(square.getPosition())) {
-        var curPos = square.move(velocity);
-        // console.log('curpos',);
+    var curPos = square.getPosition();
+    var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
+
+    var nextj = Math.floor(nextPos.x / 30);
+    var nexti = Math.floor(nextPos.y / 30);
+    console.log('next', nextPos, curPos, nexti, nextj, PaintUtils.isInBoundry(nextPos));
+    if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
+        console.log('before move', square.getPosition(), velocity);
+        curPos = square.move(velocity);
+        console.log('after move', curPos);
+        
+    }
+    else {
+        // console.log(curPos);
         gameScene.updateBlockMap(curPos);
     }
     
 }
 
 function draw () {
-    // square.draw(ctx);
+    square.draw(ctx);
     gameScene.draw(ctx);
 }
 

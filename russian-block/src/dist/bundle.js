@@ -19,14 +19,15 @@ var Vector = require('./Vector');
 var Square = require('./Square');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
+var PrintUtils = require('./utils/PrintUtils');
 var Constants = require('./Constants');
 
 
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
-var square = new Square(new Vector(2, 2));
+var square = new Square(new Vector(0, 0));
 
-var velocity = new Vector(0, 10);
+var velocity = new Vector(0, 30);
 
 
 
@@ -52,17 +53,22 @@ GameScene.prototype = {
         return blockMap;
     },
 
+    createSquare: function () {
+        square = new Square(new Vector(0, 0));
+    },
+
     updateBlockMap: function (pos) {
-        // 如果碰到stack 
-        // decide the pos belon to the blockmap i j
+        // 检查 pos 和 现有堆积的squares 的连通性
+        
+
         var j = Math.floor(pos.x / 30);
         var i = Math.floor(pos.y / 30);
-        console.log(i, j);
-        this.blockMap[j][i] = true;
+        // console.log(i, j);
+        this.blockMap[i][j] = true;
+        PrintUtils.printColInMatrix(this.blockMap, 0);
 
-        for (var i = 0;i < 17; i++) {
-            console.log(this.blockMap[i]);
-        }
+        this.createSquare();
+        
     },
 
     draw: function (ctx) {
@@ -72,8 +78,9 @@ GameScene.prototype = {
             var xlen = this.blockMap[0].length;
             
             for (var j = 0;j < xlen; j++) {
-                var square = new Square(new Vector(i * 30, j * 30));
+                var square = new Square(new Vector(j * 30, i * 30));
                 if (this.blockMap[i][j]) {
+                    // console.log('draw gameScene', i, j, square.getPosition());
                     square.draw(ctx);
                 }
             }
@@ -86,7 +93,7 @@ GameScene.prototype = {
 
 var gameScene = new GameScene();
 
-var fps = 5;
+var fps = 1;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -111,17 +118,27 @@ function clear() {
 
 function update () {
     
-    
-    if (PaintUtils.isInBoundry(square.getPosition())) {
-        var curPos = square.move(velocity);
-        // console.log('curpos',);
+    var curPos = square.getPosition();
+    var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
+
+    var nextj = Math.floor(nextPos.x / 30);
+    var nexti = Math.floor(nextPos.y / 30);
+    console.log('next', nextPos, curPos, nexti, nextj, PaintUtils.isInBoundry(nextPos));
+    if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
+        console.log('before move', square.getPosition(), velocity);
+        curPos = square.move(velocity);
+        console.log('after move', curPos);
+        
+    }
+    else {
+        // console.log(curPos);
         gameScene.updateBlockMap(curPos);
     }
     
 }
 
 function draw () {
-    // square.draw(ctx);
+    square.draw(ctx);
     gameScene.draw(ctx);
 }
 
@@ -171,7 +188,7 @@ function listenKeyBoardEvent () {
 
 module.exports = GameScene;
 
-},{"./Constants":1,"./Square":3,"./Vector":4,"./utils/EventUtils":6,"./utils/PaintUtils":7}],3:[function(require,module,exports){
+},{"./Constants":1,"./Square":3,"./Vector":4,"./utils/EventUtils":6,"./utils/PaintUtils":7,"./utils/PrintUtils":8}],3:[function(require,module,exports){
 /**
  * 单个方块类
  */
@@ -192,7 +209,7 @@ Square.prototype = {
     },
 
     move: function (v) {
-        this.pos = this.pos.add(v);
+        this.pos.add(v);
 
         return this.pos;
 
@@ -218,13 +235,13 @@ Vector.prototype = {
     add : function (vector) {
         this.x += vector.x;
         this.y += vector.y;
-
-        return new Vector(this.x, this.y);
+        return new Vector(this.x + vector.x, this.y + vector.y);
     },
 
     minus : function (vector) {
         this.x -= vector.x;
         this.y -= vector.y;
+        return new Vector(this.x - vector.x, this.y - vector.y);
     },
 
     getMagnitude : function () {
@@ -335,8 +352,8 @@ var PaintUtils = {
 
     isInBoundry: function (pos) {
         var flag = true;
-        if (pos.x < 0 || pos.x > Constants.GAMESCENE_WIDTH) flag = false;
-        if (pos.y < 0 || pos.x > Constants.GAMESCENE_HEIGHT) flag = false;
+        if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
+        if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
 
         return flag;
     } 
@@ -344,4 +361,33 @@ var PaintUtils = {
 }
 
 module.exports = PaintUtils;
-},{"../Constants":1,"../Vector":4}]},{},[5]);
+},{"../Constants":1,"../Vector":4}],8:[function(require,module,exports){
+var PrintUtils = {
+
+    printMatrix: function (matrix) {
+        for (var i = 0; i < matrix.length; i++) {
+            var row = '';
+            for (var j = 0; j < matrix[0].length; j++) {
+                row += matrix[i][j] + ' ';
+            }
+            console.log(row);
+        }
+    },
+
+    printColInMatrix: function (matrix, col) {
+        var row = '';
+        
+        for (var i = 0; i < matrix.length; i++) {
+            
+            for (var j = 0; j < matrix[0].length; j++) {
+                if (j === col) row += matrix[i][j] + ', ';
+            }
+            
+        }
+
+        console.log(row);
+    },
+}
+
+module.exports = PrintUtils;
+},{}]},{},[5]);

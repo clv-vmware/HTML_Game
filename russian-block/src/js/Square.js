@@ -18,7 +18,7 @@ Square.prototype = {
     },
 
     move: function (v) {
-        this.pos = this.pos.add(v);
+        this.pos.add(v);
 
         return this.pos;
 

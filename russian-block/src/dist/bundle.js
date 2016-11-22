@@ -123,18 +123,12 @@ function update () {
 
     var nextj = Math.floor(nextPos.x / 30);
     var nexti = Math.floor(nextPos.y / 30);
-    console.log('next', nextPos, curPos, nexti, nextj, PaintUtils.isInBoundry(nextPos));
     if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
-        console.log('before move', square.getPosition(), velocity);
         curPos = square.move(velocity);
-        console.log('after move', curPos);
-        
     }
-    else {
-        // console.log(curPos);
+    else { // hit case
         gameScene.updateBlockMap(curPos);
     }
-    
 }
 
 function draw () {

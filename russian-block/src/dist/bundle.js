@@ -29,6 +29,7 @@ var Constants = require('./Constants');
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
 var square = new Square(new Vector(0, 0));
+square.setVelocity(new Vector(0, 30));
 
 var velocity = new Vector(0, 30);
 
@@ -73,6 +74,7 @@ GameScene.prototype = {
         var randX = Math.floor(Math.random() * 17) * 30;
         console.log();
         square = new Square(new Vector(randX, 0));
+        square.setVelocity(new Vector(0, 30));
     },
 
     updateBlockMap: function (pos, color) {
@@ -110,7 +112,7 @@ GameScene.prototype = {
 
 var gameScene = new GameScene();
 
-var fps = 10;
+var fps = 5;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -134,25 +136,35 @@ function clear() {
 }
 
 function update () {
+    
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
-    var nextj = Math.floor(nextPos.x / 30);
-    var nexti = Math.floor(nextPos.y / 30);
+        console.log(nextPos);
+        var nextj = Math.floor(nextPos.x / 30);
+        var nexti = Math.floor(nextPos.y / 30);
+    
     if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
-        curPos = square.move(velocity);
+        curPos = square.move();
     }
     else { // hit case
         gameScene.updateBlockMap(curPos, square.color);
     }
+     
+    // else {
+        
+    // }
 }
 
 function draw () {
     square.draw(ctx);
     gameScene.draw(ctx);
+    square.setVelocity(new Vector(0, 30));
+    
 }
 
 function queue () {
+    
     if (!runningFlag) return;
     window.requestAnimationFrame(loop);
 }
@@ -177,21 +189,18 @@ function initButtons () {
 function listenKeyBoardEvent () {
     EventUtils.addHandler(window, 'keydown', function (event) {
 
-        if (event.keyCode === Constants.UP_ARROW) {
-            velocity = new Vector(0, -absoluteV);
-            snake.setVelocity(velocity);
-        }
-        else if(event.keyCode === Constants.DOWN_ARROW) {
-            velocity = new Vector(0, absoluteV);
-            snake.setVelocity(velocity);
+        
+        if(event.keyCode === Constants.DOWN_ARROW) {
+            square.setVelocity(new Vector(0, 60));
         }
         else if(event.keyCode === Constants.LEFT_ARROW) {
-            velocity = new Vector(-absoluteV, 0);
-            snake.setVelocity(velocity);
+            
+            square.setVelocity(new Vector(-30, 0));
+            // console.log('left arrow ',square.velocity );
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            velocity = new Vector(absoluteV, 0);
-            snake.setVelocity(velocity);
+            square.setVelocity(new Vector(30, 0));
+            // console.log('right arrow ',square.velocity );
         } 
     });
 };
@@ -204,12 +213,14 @@ module.exports = GameScene;
  */
 
 var Constants = require('./Constants');
+var Vector = require('./Vector');
 var PaintUtils = require('./utils/PaintUtils');
 
 
 function Square (pos) {
     this.pos = pos;
     this.color = PaintUtils.getRandomColor();
+    this.velocity = new Vector(0, 0);
     this.size = Constants.SQUARE_SIZE;
 }
 
@@ -220,7 +231,29 @@ Square.prototype = {
     },
 
     move: function (v) {
-        this.pos.add(v);
+        var oldPos = this.getPosition();
+        this.pos = oldPos.add(v || this.velocity);
+
+        // BOUNDRY DETECT
+        if (this.pos.x + Constants.SQUARE_SIZE > Constants.GAMESCENE_WIDTH) {
+            this.setVelocity(new Vector(-this.velocity.x, this.velocity.y));
+            this.pos.x = Constants.GAMESCENE_WIDTH - Constants.SQUARE_SIZE;
+        }
+
+        if (this.pos.x < 0) {
+            this.velocity = new Vector(-this.velocity.x, this.velocity.y);
+            this.pos.x = 0;
+        }
+
+        if (this.pos.y + Constants.SQUARE_SIZE > Constants.GAMESCENE_HEIGHT) {
+            this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+            this.pos.y = Constants.GAMESCENE_HEIGHT - Constants.SQUARE_SIZE;
+        }
+
+        if (this.pos.y < 0) {
+            this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+            this.pos.y = 0;
+        }
 
         return this.pos;
 
@@ -234,10 +267,14 @@ Square.prototype = {
         return this.color;
     },
 
+    setVelocity: function (v) {
+        this.velocity = v;
+    }
+
 }
 
 module.exports = Square;
-},{"./Constants":1,"./utils/PaintUtils":7}],4:[function(require,module,exports){
+},{"./Constants":1,"./Vector":4,"./utils/PaintUtils":7}],4:[function(require,module,exports){
 /**
  * 
  */
@@ -251,13 +288,13 @@ Vector.prototype = {
     add : function (vector) {
         this.x += vector.x;
         this.y += vector.y;
-        return new Vector(this.x + vector.x, this.y + vector.y);
+        return new Vector(this.x, this.y);
     },
 
     minus : function (vector) {
         this.x -= vector.x;
         this.y -= vector.y;
-        return new Vector(this.x - vector.x, this.y - vector.y);
+        return new Vector(this.x, this.y);
     },
 
     getMagnitude : function () {

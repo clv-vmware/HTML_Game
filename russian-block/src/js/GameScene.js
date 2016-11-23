@@ -9,6 +9,7 @@ var Constants = require('./Constants');
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
 var square = new Square(new Vector(0, 0));
+square.setVelocity(new Vector(0, 30));
 
 var velocity = new Vector(0, 30);
 
@@ -53,6 +54,7 @@ GameScene.prototype = {
         var randX = Math.floor(Math.random() * 17) * 30;
         console.log();
         square = new Square(new Vector(randX, 0));
+        square.setVelocity(new Vector(0, 30));
     },
 
     updateBlockMap: function (pos, color) {
@@ -90,7 +92,7 @@ GameScene.prototype = {
 
 var gameScene = new GameScene();
 
-var fps = 10;
+var fps = 5;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -114,25 +116,35 @@ function clear() {
 }
 
 function update () {
+    
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
-    var nextj = Math.floor(nextPos.x / 30);
-    var nexti = Math.floor(nextPos.y / 30);
+        console.log(nextPos);
+        var nextj = Math.floor(nextPos.x / 30);
+        var nexti = Math.floor(nextPos.y / 30);
+    
     if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
-        curPos = square.move(velocity);
+        curPos = square.move();
     }
     else { // hit case
         gameScene.updateBlockMap(curPos, square.color);
     }
+     
+    // else {
+        
+    // }
 }
 
 function draw () {
     square.draw(ctx);
     gameScene.draw(ctx);
+    square.setVelocity(new Vector(0, 30));
+    
 }
 
 function queue () {
+    
     if (!runningFlag) return;
     window.requestAnimationFrame(loop);
 }
@@ -157,21 +169,18 @@ function initButtons () {
 function listenKeyBoardEvent () {
     EventUtils.addHandler(window, 'keydown', function (event) {
 
-        if (event.keyCode === Constants.UP_ARROW) {
-            velocity = new Vector(0, -absoluteV);
-            snake.setVelocity(velocity);
-        }
-        else if(event.keyCode === Constants.DOWN_ARROW) {
-            velocity = new Vector(0, absoluteV);
-            snake.setVelocity(velocity);
+        
+        if(event.keyCode === Constants.DOWN_ARROW) {
+            square.setVelocity(new Vector(0, 60));
         }
         else if(event.keyCode === Constants.LEFT_ARROW) {
-            velocity = new Vector(-absoluteV, 0);
-            snake.setVelocity(velocity);
+            
+            square.setVelocity(new Vector(-30, 0));
+            // console.log('left arrow ',square.velocity );
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            velocity = new Vector(absoluteV, 0);
-            snake.setVelocity(velocity);
+            square.setVelocity(new Vector(30, 0));
+            // console.log('right arrow ',square.velocity );
         } 
     });
 };

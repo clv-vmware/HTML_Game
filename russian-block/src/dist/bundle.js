@@ -9,6 +9,9 @@ var Constants = {
 
     GAMESCENE_WIDTH: 300,
     GAMESCENE_HEIGHT: 510,
+
+    // COLOR_LIST: ['#C46564', '#F0E999', '#B8C99D', '#9B726F', '#EEB15B']
+    COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA']
     
 
 };
@@ -33,6 +36,7 @@ var velocity = new Vector(0, 30);
 
 function GameScene () {
     this.blockMap = this.initBlockMap();
+    this.blockColorMap = this.initBlockColorMap();
 }
 
 GameScene.prototype = {
@@ -53,11 +57,25 @@ GameScene.prototype = {
         return blockMap;
     },
 
-    createSquare: function () {
-        square = new Square(new Vector(0, 0));
+    initBlockColorMap: function () {
+        var colorMap = new Array(17);
+        for (var j = 0;j < 17; j++) {
+            colorMap[j] = new Array(10);
+            for (var i = 0;i < 10;i ++) {
+                colorMap[j][i] = '';
+            }
+        }
+        // PrintUtils.printMatrix(colorMap);
+        return colorMap;
     },
 
-    updateBlockMap: function (pos) {
+    createSquare: function () {
+        var randX = Math.floor(Math.random() * 17) * 30;
+        console.log();
+        square = new Square(new Vector(randX, 0));
+    },
+
+    updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
         
 
@@ -65,7 +83,9 @@ GameScene.prototype = {
         var i = Math.floor(pos.y / 30);
         // console.log(i, j);
         this.blockMap[i][j] = true;
-        PrintUtils.printColInMatrix(this.blockMap, 0);
+        // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
+        this.blockColorMap[i][j] = color;
+        
 
         this.createSquare();
         
@@ -81,19 +101,16 @@ GameScene.prototype = {
                 var square = new Square(new Vector(j * 30, i * 30));
                 if (this.blockMap[i][j]) {
                     // console.log('draw gameScene', i, j, square.getPosition());
-                    square.draw(ctx);
+                    square.draw(ctx, this.blockColorMap[i][j]);
                 }
             }
         }
-
     }
-
-
 }
 
 var gameScene = new GameScene();
 
-var fps = 1;
+var fps = 10;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -117,7 +134,6 @@ function clear() {
 }
 
 function update () {
-    
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
@@ -127,7 +143,7 @@ function update () {
         curPos = square.move(velocity);
     }
     else { // hit case
-        gameScene.updateBlockMap(curPos);
+        gameScene.updateBlockMap(curPos, square.color);
     }
 }
 
@@ -193,13 +209,14 @@ var PaintUtils = require('./utils/PaintUtils');
 
 function Square (pos) {
     this.pos = pos;
+    this.color = PaintUtils.getRandomColor();
     this.size = Constants.SQUARE_SIZE;
 }
 
 Square.prototype = {
 
-    draw : function (ctx) {
-        PaintUtils.drawCell(ctx, '#ccc', this.pos, this.size);
+    draw : function (ctx, color) {
+        PaintUtils.drawCell(ctx, color || this.color, this.pos, this.size);
     },
 
     move: function (v) {
@@ -211,7 +228,12 @@ Square.prototype = {
 
     getPosition: function () {
         return this.pos;
-    }
+    },
+
+    getColor: function () {
+        return this.color;
+    },
+
 }
 
 module.exports = Square;
@@ -297,12 +319,17 @@ var PaintUtils = {
         return new Vector(roundX, roundY);
     },
 
+    getRandomColor: function () {
+        var rand = Math.floor(Math.random() * 5);
+        return Constants.COLOR_LIST[rand];
+    },
+
     drawCell: function(ctx, color, pos, size) {
         
-        ctx.fillStyle = color || '#ccc';
+        ctx.fillStyle = color || '#222222';
         ctx.beginPath();
         // ctx.fillRect(pos.x, pos.y, size, size);
-        this.drawRoundedRect (ctx, '#272727', '#272727', pos.x, pos.y, size, size, 5)
+        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, size, size, 5)
         // console.log('in draw', this.position);
         ctx.closePath();
         ctx.fill();
@@ -313,17 +340,16 @@ var PaintUtils = {
         ctx.beginPath();
         this.roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
         ctx.strokeStyle = strokeStyle;
-        // ctx.shadowColor = "RGBA(127,127,127,1)";
 
         ctx.shadowOffsetX = 5;
         ctx.shadowOffsetY = 5;
         ctx.shadowBlur = 0;
         ctx.fillStyle = fillStyle;
-
         ctx.stroke();
         ctx.fill();
     },
 
+    // draw round rect
     roundedRect : function (ctx, cornerX, cornerY, width, height, cornerRadius) {
         if (width > 0) {
             ctx.moveTo(cornerX + cornerRadius, cornerY);

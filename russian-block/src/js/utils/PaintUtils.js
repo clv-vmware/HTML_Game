@@ -16,12 +16,17 @@ var PaintUtils = {
         return new Vector(roundX, roundY);
     },
 
+    getRandomColor: function () {
+        var rand = Math.floor(Math.random() * 5);
+        return Constants.COLOR_LIST[rand];
+    },
+
     drawCell: function(ctx, color, pos, size) {
         
-        ctx.fillStyle = color || '#ccc';
+        ctx.fillStyle = color || '#222222';
         ctx.beginPath();
         // ctx.fillRect(pos.x, pos.y, size, size);
-        this.drawRoundedRect (ctx, '#272727', '#272727', pos.x, pos.y, size, size, 5)
+        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, size, size, 5)
         // console.log('in draw', this.position);
         ctx.closePath();
         ctx.fill();
@@ -32,17 +37,16 @@ var PaintUtils = {
         ctx.beginPath();
         this.roundedRect (ctx, cornerX, cornerY, width, height, cornerRadius);
         ctx.strokeStyle = strokeStyle;
-        // ctx.shadowColor = "RGBA(127,127,127,1)";
 
         ctx.shadowOffsetX = 5;
         ctx.shadowOffsetY = 5;
         ctx.shadowBlur = 0;
         ctx.fillStyle = fillStyle;
-
         ctx.stroke();
         ctx.fill();
     },
 
+    // draw round rect
     roundedRect : function (ctx, cornerX, cornerY, width, height, cornerRadius) {
         if (width > 0) {
             ctx.moveTo(cornerX + cornerRadius, cornerY);

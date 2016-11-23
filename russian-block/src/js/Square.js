@@ -8,13 +8,14 @@ var PaintUtils = require('./utils/PaintUtils');
 
 function Square (pos) {
     this.pos = pos;
+    this.color = PaintUtils.getRandomColor();
     this.size = Constants.SQUARE_SIZE;
 }
 
 Square.prototype = {
 
-    draw : function (ctx) {
-        PaintUtils.drawCell(ctx, '#ccc', this.pos, this.size);
+    draw : function (ctx, color) {
+        PaintUtils.drawCell(ctx, color || this.color, this.pos, this.size);
     },
 
     move: function (v) {
@@ -26,7 +27,12 @@ Square.prototype = {
 
     getPosition: function () {
         return this.pos;
-    }
+    },
+
+    getColor: function () {
+        return this.color;
+    },
+
 }
 
 module.exports = Square;

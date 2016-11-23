@@ -16,6 +16,7 @@ var velocity = new Vector(0, 30);
 
 function GameScene () {
     this.blockMap = this.initBlockMap();
+    this.blockColorMap = this.initBlockColorMap();
 }
 
 GameScene.prototype = {
@@ -36,11 +37,25 @@ GameScene.prototype = {
         return blockMap;
     },
 
-    createSquare: function () {
-        square = new Square(new Vector(0, 0));
+    initBlockColorMap: function () {
+        var colorMap = new Array(17);
+        for (var j = 0;j < 17; j++) {
+            colorMap[j] = new Array(10);
+            for (var i = 0;i < 10;i ++) {
+                colorMap[j][i] = '';
+            }
+        }
+        // PrintUtils.printMatrix(colorMap);
+        return colorMap;
     },
 
-    updateBlockMap: function (pos) {
+    createSquare: function () {
+        var randX = Math.floor(Math.random() * 17) * 30;
+        console.log();
+        square = new Square(new Vector(randX, 0));
+    },
+
+    updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
         
 
@@ -48,7 +63,9 @@ GameScene.prototype = {
         var i = Math.floor(pos.y / 30);
         // console.log(i, j);
         this.blockMap[i][j] = true;
-        PrintUtils.printColInMatrix(this.blockMap, 0);
+        // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
+        this.blockColorMap[i][j] = color;
+        
 
         this.createSquare();
         
@@ -64,19 +81,16 @@ GameScene.prototype = {
                 var square = new Square(new Vector(j * 30, i * 30));
                 if (this.blockMap[i][j]) {
                     // console.log('draw gameScene', i, j, square.getPosition());
-                    square.draw(ctx);
+                    square.draw(ctx, this.blockColorMap[i][j]);
                 }
             }
         }
-
     }
-
-
 }
 
 var gameScene = new GameScene();
 
-var fps = 1;
+var fps = 10;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -100,7 +114,6 @@ function clear() {
 }
 
 function update () {
-    
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
@@ -110,7 +123,7 @@ function update () {
         curPos = square.move(velocity);
     }
     else { // hit case
-        gameScene.updateBlockMap(curPos);
+        gameScene.updateBlockMap(curPos, square.color);
     }
 }
 

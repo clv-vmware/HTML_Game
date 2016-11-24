@@ -1,5 +1,6 @@
 var Vector = require('./Vector');
 var Square = require('./Square');
+var Tetromino = require('./Tetromino');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
 var PrintUtils = require('./utils/PrintUtils');
@@ -10,6 +11,8 @@ var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
 var square = new Square(new Vector(0, 0));
 square.setVelocity(new Vector(0, 30));
+
+var testTetromino = new Tetromino(new Vector(20, 20), 'S');
 
 var velocity = new Vector(0, 30);
 
@@ -52,7 +55,6 @@ GameScene.prototype = {
 
     createSquare: function () {
         var randX = Math.floor(Math.random() * 17) * 30;
-        console.log();
         square = new Square(new Vector(randX, 0));
         square.setVelocity(new Vector(0, 30));
     },
@@ -120,7 +122,7 @@ function update () {
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
-        console.log(nextPos);
+        // console.log(nextPos);
         var nextj = Math.floor(nextPos.x / 30);
         var nexti = Math.floor(nextPos.y / 30);
     
@@ -130,16 +132,15 @@ function update () {
     else { // hit case
         gameScene.updateBlockMap(curPos, square.color);
     }
-     
-    // else {
-        
-    // }
 }
 
 function draw () {
-    square.draw(ctx);
-    gameScene.draw(ctx);
-    square.setVelocity(new Vector(0, 30));
+    testTetromino.draw(ctx);
+    // square.draw(ctx);
+    // gameScene.draw(ctx);
+    // square.setVelocity(new Vector(0, 30));
+
+
     
 }
 

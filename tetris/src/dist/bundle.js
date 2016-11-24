@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Vector = require('./Vector');
+
 var Constants = {
     SQUARE_SIZE: 30,
 
@@ -11,15 +13,24 @@ var Constants = {
     GAMESCENE_HEIGHT: 510,
 
     // COLOR_LIST: ['#C46564', '#F0E999', '#B8C99D', '#9B726F', '#EEB15B']
-    COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA']
+    COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA'],
+
+    TETROMINO_TYPES: ['O', 'T', 'L', 'Z', 'S'],
+
+    V_LEFT: new Vector(-30, 0),
+    V_RIGHT: new Vector(30, 0),
+    V_UP: new Vector(0, -30),
+    V_DOWN: new Vector(0, 30),
+
     
 
 };
 
 module.exports = Constants;
-},{}],2:[function(require,module,exports){
+},{"./Vector":5}],2:[function(require,module,exports){
 var Vector = require('./Vector');
 var Square = require('./Square');
+var Tetromino = require('./Tetromino');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
 var PrintUtils = require('./utils/PrintUtils');
@@ -30,6 +41,8 @@ var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
 var square = new Square(new Vector(0, 0));
 square.setVelocity(new Vector(0, 30));
+
+var testTetromino = new Tetromino(new Vector(20, 20), 'S');
 
 var velocity = new Vector(0, 30);
 
@@ -72,7 +85,6 @@ GameScene.prototype = {
 
     createSquare: function () {
         var randX = Math.floor(Math.random() * 17) * 30;
-        console.log();
         square = new Square(new Vector(randX, 0));
         square.setVelocity(new Vector(0, 30));
     },
@@ -140,7 +152,7 @@ function update () {
     var curPos = square.getPosition();
     var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
 
-        console.log(nextPos);
+        // console.log(nextPos);
         var nextj = Math.floor(nextPos.x / 30);
         var nexti = Math.floor(nextPos.y / 30);
     
@@ -150,16 +162,15 @@ function update () {
     else { // hit case
         gameScene.updateBlockMap(curPos, square.color);
     }
-     
-    // else {
-        
-    // }
 }
 
 function draw () {
-    square.draw(ctx);
-    gameScene.draw(ctx);
-    square.setVelocity(new Vector(0, 30));
+    testTetromino.draw(ctx);
+    // square.draw(ctx);
+    // gameScene.draw(ctx);
+    // square.setVelocity(new Vector(0, 30));
+
+
     
 }
 
@@ -207,7 +218,7 @@ function listenKeyBoardEvent () {
 
 module.exports = GameScene;
 
-},{"./Constants":1,"./Square":3,"./Vector":4,"./utils/EventUtils":6,"./utils/PaintUtils":7,"./utils/PrintUtils":8}],3:[function(require,module,exports){
+},{"./Constants":1,"./Square":3,"./Tetromino":4,"./Vector":5,"./utils/EventUtils":7,"./utils/PaintUtils":9,"./utils/PrintUtils":10}],3:[function(require,module,exports){
 /**
  * 单个方块类
  */
@@ -274,7 +285,94 @@ Square.prototype = {
 }
 
 module.exports = Square;
-},{"./Constants":1,"./Vector":4,"./utils/PaintUtils":7}],4:[function(require,module,exports){
+},{"./Constants":1,"./Vector":5,"./utils/PaintUtils":9}],4:[function(require,module,exports){
+/**
+ * Tetromino类
+ */
+
+var Constants = require('./Constants');
+var Vector = require('./Vector');
+var Square = require('./Square');
+var PaintUtils = require('./utils/PaintUtils');
+var MathUtils = require('./utils/MathUtils');
+var Utils = require('./utils/Utils');
+
+function Tetromino (pos, type) {
+    this.type = type || Utils.getRandomElement(Constants.TETROMINO_TYPES);
+    
+    this.pos = pos;
+    this.squareList = this.getSquareListByType(this.type, pos);
+    this.color = PaintUtils.getRandomColor();
+    this.velocity = new Vector(0, 0);
+}
+
+Tetromino.prototype = {
+    draw: function (ctx, color) {
+        var list = this.squareList;
+        for (var i = 0;i < list.length; i++) {
+            list[i].draw(ctx);
+        }
+
+    },
+
+    move: function () {
+
+    },
+
+    // 组成不同形状 tetromino 的square list 
+    getSquareListByType: function (type, pos) {
+        var list = [];
+        switch (type) {
+            case 'O':
+                list.push(new Square(pos));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_DOWN)));
+                break;
+
+            case 'Z':
+                list.push(new Square(pos));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN, Constants.V_RIGHT)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_DOWN, Constants.V_RIGHT)));
+                break;
+
+            case 'T':
+                list.push(new Square(pos));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_RIGHT)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_DOWN)));
+                break;
+
+            case 'L':
+                list.push(new Square(pos));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN, Constants.V_DOWN)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN, Constants.V_DOWN, Constants.V_DOWN)));
+                break;
+
+            case 'S':
+                list.push(new Square(pos));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_DOWN)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_DOWN)));
+                list.push(new Square(MathUtils.vectorAdd(pos, Constants.V_RIGHT, Constants.V_DOWN, Constants.V_DOWN)));
+                break;
+        
+        
+        
+            default:
+                break;
+        }
+
+        return list;
+    }
+
+
+
+};
+
+module.exports = Tetromino;
+},{"./Constants":1,"./Square":3,"./Vector":5,"./utils/MathUtils":8,"./utils/PaintUtils":9,"./utils/Utils":11}],5:[function(require,module,exports){
 /**
  * 
  */
@@ -303,7 +401,7 @@ Vector.prototype = {
 }
 
 module.exports = Vector;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Square = require('./Square');
 var Vector = require('./Vector');
 var GameScene = require('./GameScene');
@@ -312,7 +410,7 @@ var gameScene = new GameScene();
 gameScene.init();
 
 
-},{"./GameScene":2,"./Square":3,"./Vector":4}],6:[function(require,module,exports){
+},{"./GameScene":2,"./Square":3,"./Vector":5}],7:[function(require,module,exports){
 var EventUtil = {
     addHandler: function (element, type, handler) {
         if (element.addEventListener) {
@@ -337,7 +435,29 @@ var EventUtil = {
 }
 
 module.exports = EventUtil;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+var Vector = require('../Vector');
+
+var MathUtils = {
+    vectorAdd: function (v1, v2) {
+        var sumX = 0;
+        var sumY = 0;
+        for (var i = 0;i < arguments.length; i++) {
+            sumX += arguments[i].x;
+            sumY += arguments[i].y;
+        }
+        return new Vector(sumX, sumY);
+    },
+
+    vectorMinus: function (v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    },
+
+
+}
+
+module.exports = MathUtils;
+},{"../Vector":5}],9:[function(require,module,exports){
 /**
  * 
  */
@@ -418,7 +538,7 @@ var PaintUtils = {
 }
 
 module.exports = PaintUtils;
-},{"../Constants":1,"../Vector":4}],8:[function(require,module,exports){
+},{"../Constants":1,"../Vector":5}],10:[function(require,module,exports){
 var PrintUtils = {
 
     printMatrix: function (matrix) {
@@ -447,4 +567,12 @@ var PrintUtils = {
 }
 
 module.exports = PrintUtils;
-},{}]},{},[5]);
+},{}],11:[function(require,module,exports){
+var Utils = {
+    getRandomElement: function (elems) {
+        var len = elems.length;
+        var rand = Math.floor(Math.random() * len);
+        return elems[rand];
+    }
+};
+},{}]},{},[6]);

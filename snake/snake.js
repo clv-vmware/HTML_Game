@@ -19,7 +19,7 @@ Snake.prototype = {
         
         this.bodyPos = new Vector(this.headPos.x - GRID_SIZE, this.headPos.y);
         this.tailPos = new Vector(this.bodyPos.x - GRID_SIZE, this.bodyPos.y);
-        console.log('INIT ', this.headPos, this.bodyPos, this.tailPos, 'this.width', this.width, this.height);
+        // console.log('INIT ', this.headPos, this.bodyPos, this.tailPos, 'this.width', this.width, this.height);
         this.snakeSize = GRID_SIZE;
         this.velocity;
     },
@@ -47,7 +47,7 @@ Snake.prototype = {
         this.bodyPos = new Vector(this.headPos.x, this.headPos.y);
         
         this.headPos = oldHeadPos.add(this.velocity);
-        console.log(this.headPos, this.tailPos);
+        // console.log(this.headPos, this.tailPos);
 
         // BOUNDRY DETECT
         if (this.headPos.x + GRID_SIZE > this.width) {

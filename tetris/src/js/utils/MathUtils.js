@@ -18,7 +18,6 @@ var MathUtils = {
 
     // convert vector list to matrix
     convertVectorList: function (list) {
-        console.log('convert curpos ', list);
         var matrix = new Array(16);
         for (var i = 0;i < 16; i++ ) {
             matrix[i] = new Array(10);
@@ -29,10 +28,8 @@ var MathUtils = {
         
 
         for(var s = 0;s < list.length;s++) {
-            
             var x = list[s].x;
             var y = list[s].y;
-            console.log('convert', x, y);
             matrix[y][x] = 1;
         }
         // PrintUtils.printMatrix(matrix);

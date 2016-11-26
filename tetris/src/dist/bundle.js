@@ -39,15 +39,13 @@ var Constants = require('./Constants');
 
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
-// TEST SQUARE CASE
-// var square = new Square(new Vector(0, 0));
-// square.setVelocity(new Vector(0, 1));
 
 var testTetromino = new Tetromino();
 testTetromino.setVelocity(new Vector(0, 1));
-
 var velocity = new Vector(0, 1);
 
+
+/**GAME SCENE CLASS */
 function GameScene () {
     this.blockMap = this.initBlockMap();
     this.blockColorMap = this.initBlockColorMap();
@@ -59,6 +57,7 @@ GameScene.prototype = {
         initButtons();
         listenKeyBoardEvent();
     },
+
     // 采用 matrix 1， 0.。。 表示 
     initBlockMap: function () {
         var blockMap = new Array(16);
@@ -68,7 +67,6 @@ GameScene.prototype = {
                 blockMap[j][i] = 0;
             }
         }
-
         return blockMap;
     },
 
@@ -91,7 +89,6 @@ GameScene.prototype = {
 
     updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
-        console.log('in updateBlockMap', pos);
         var p = MathUtils.convertVectorList(pos);
         // PrintUtils.printMatrix(p);
 
@@ -101,19 +98,14 @@ GameScene.prototype = {
                 this.blockColorMap[i][j] = color;
             }
         }
-        PrintUtils.printMatrix(this.blockMap);
+        // PrintUtils.printMatrix(this.blockMap);
         
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
-        
 
         this.createTetromino();
-        
     },
 
     checkCollide: function (nextPos) {
-        console.log('checkCollide', nextPos);
-        // PrintUtils.printMatrix(this.blockMap);
-        
         var pos = MathUtils.convertVectorList(nextPos);
         // PrintUtils.printMatrix(pos);
 
@@ -123,20 +115,17 @@ GameScene.prototype = {
                 if (pos[i][j] > 1) return true;
             }
         }
-        console.log(' finish checkCollide');
         return false;
     },
 
     draw: function (ctx) {
         var ylen = this.blockMap.length;
-        
         for (var i = 0; i < 16; i++ ) {
             var xlen = this.blockMap[0].length;
             
             for (var j = 0;j < 10; j++) {
                 var square = new Square(new Vector(j, i));
                 if (this.blockMap[i][j]) {
-                    // console.log('draw gameScene', i, j, square.getPosition());
                     square.draw(ctx, this.blockColorMap[i][j]);
                 }
             }
@@ -144,6 +133,8 @@ GameScene.prototype = {
     }
 }
 
+
+// DEFINE GLOBAL VARS
 var gameScene = new GameScene();
 
 var fps = 5;
@@ -153,6 +144,7 @@ var interval = 1000 / fps;
 var delta;
 var runningFlag = true;
 
+// LOOP HELPER FUNCS
 function loop () {
     now = Date.now();
     delta = now - then;
@@ -170,22 +162,14 @@ function clear() {
 }
 
 function update () {
-    // testTetromino.move();
-    
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
-    // console.log('nextpos', nextPos, curPos);
-
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
-    console.log('IF BOUNDRY', PaintUtils.isTetrominoInBoundry(nextPos));
     if (PaintUtils.isTetrominoInBoundry(nextPos) && !gameScene.checkCollide(nextPos)) {
-        
         curPos = testTetromino.move();
-        console.log('un hit!', curPos);
     }
     else { // hit case!
-        console.log('hit!', curPos);
         gameScene.updateBlockMap(curPos, testTetromino.color);
     }
 }
@@ -196,7 +180,6 @@ function draw () {
 }
 
 function queue () {
-    
     if (!runningFlag) return;
     window.requestAnimationFrame(loop);
 }
@@ -220,8 +203,6 @@ function initButtons () {
 
 function listenKeyBoardEvent () {
     EventUtils.addHandler(window, 'keydown', function (event) {
-
-        
         if(event.keyCode === Constants.DOWN_ARROW) {
             square.setVelocity(new Vector(0, 60));
         }
@@ -339,14 +320,6 @@ Tetromino.prototype = {
         for (var i = 0;i < pos.length; i++) {
             pos[i].move(this.velocity);
         }
-
-        // // BOUNTRY DETECT
-        // if (this.hitBoundry()) {
-            
-        //     this.setVelocity(-this.velocity);
-        //     console.log('hit!', this.velocity);
-        // }
-
         return this.pos;
     },
 
@@ -364,7 +337,6 @@ Tetromino.prototype = {
         for (var i = 0;i < list.length; i++) {
             if (list[i].hitBoundry()) return true;
         }
-
         return false;
     },
 
@@ -516,7 +488,6 @@ var MathUtils = {
 
     // convert vector list to matrix
     convertVectorList: function (list) {
-        console.log('convert curpos ', list);
         var matrix = new Array(16);
         for (var i = 0;i < 16; i++ ) {
             matrix[i] = new Array(10);
@@ -527,10 +498,8 @@ var MathUtils = {
         
 
         for(var s = 0;s < list.length;s++) {
-            
             var x = list[s].x;
             var y = list[s].y;
-            console.log('convert', x, y);
             matrix[y][x] = 1;
         }
         // PrintUtils.printMatrix(matrix);

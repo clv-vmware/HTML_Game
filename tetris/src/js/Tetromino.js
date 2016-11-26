@@ -31,14 +31,6 @@ Tetromino.prototype = {
         for (var i = 0;i < pos.length; i++) {
             pos[i].move(this.velocity);
         }
-
-        // // BOUNTRY DETECT
-        // if (this.hitBoundry()) {
-            
-        //     this.setVelocity(-this.velocity);
-        //     console.log('hit!', this.velocity);
-        // }
-
         return this.pos;
     },
 
@@ -56,7 +48,6 @@ Tetromino.prototype = {
         for (var i = 0;i < list.length; i++) {
             if (list[i].hitBoundry()) return true;
         }
-
         return false;
     },
 

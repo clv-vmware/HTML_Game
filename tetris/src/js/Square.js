@@ -8,26 +8,28 @@ var PaintUtils = require('./utils/PaintUtils');
 
 
 function Square (pos) {
+    // matrix pos
     this.pos = pos;
     this.color = PaintUtils.getRandomColor();
     this.velocity = new Vector(0, 0);
-    this.size = Constants.SQUARE_SIZE;
+    // this.size = Constants.SQUARE_SIZE;
 }
 
 Square.prototype = {
 
     draw : function (ctx, color) {
-        PaintUtils.drawCell(ctx, color || this.color, this.pos, this.size);
+        PaintUtils.drawCellByMap(ctx, color || this.color, this.pos);
     },
 
     move: function (v) {
+        // console.log('in square move', v);
         var oldPos = this.getPosition();
         this.pos = oldPos.add(v || this.velocity);
 
-        // BOUNDRY DETECT
-        if (this.pos.x + Constants.SQUARE_SIZE > Constants.GAMESCENE_WIDTH) {
+        // BOUNDRY DETECT: 以网格为单位
+        if (this.pos.x + 1 > Constants.GAMESCENE_WIDTH) {
             this.setVelocity(new Vector(-this.velocity.x, this.velocity.y));
-            this.pos.x = Constants.GAMESCENE_WIDTH - Constants.SQUARE_SIZE;
+            this.pos.x = Constants.GAMESCENE_WIDTH - 1;
         }
 
         if (this.pos.x < 0) {
@@ -35,9 +37,9 @@ Square.prototype = {
             this.pos.x = 0;
         }
 
-        if (this.pos.y + Constants.SQUARE_SIZE > Constants.GAMESCENE_HEIGHT) {
+        if (this.pos.y + 1 > Constants.GAMESCENE_HEIGHT) {
             this.velocity = new Vector(this.velocity.x, -this.velocity.y);
-            this.pos.y = Constants.GAMESCENE_HEIGHT - Constants.SQUARE_SIZE;
+            this.pos.y = Constants.GAMESCENE_HEIGHT - 1;
         }
 
         if (this.pos.y < 0) {
@@ -46,7 +48,6 @@ Square.prototype = {
         }
 
         return this.pos;
-
     },
 
     getPosition: function () {

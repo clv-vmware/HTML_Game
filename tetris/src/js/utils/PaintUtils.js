@@ -21,15 +21,21 @@ var PaintUtils = {
         return Constants.COLOR_LIST[rand];
     },
 
-    drawCell: function(ctx, color, pos, size) {
+    drawCellByPixel: function(ctx, color, pos) {
         
         ctx.fillStyle = color || '#222222';
         ctx.beginPath();
         // ctx.fillRect(pos.x, pos.y, size, size);
-        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, size, size, 5)
+        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE, 5)
         // console.log('in draw', this.position);
         ctx.closePath();
         ctx.fill();
+    },
+
+    // 包装方法， 把坐标转化为pixel 
+    drawCellByMap: function (ctx, color, MapPos) {
+        var posInPixel = new Vector(MapPos.x * Constants.SQUARE_SIZE, MapPos.y * Constants.SQUARE_SIZE);
+        this.drawCellByPixel(ctx, color, posInPixel);
     },
 
     drawRoundedRect : function (ctx, strokeStyle, fillStyle, cornerX, cornerY, width, height, cornerRadius) {
@@ -67,13 +73,17 @@ var PaintUtils = {
         }
     },
 
-    isInBoundry: function (pos) {
+    isSquareInBoundry: function (pos) {
         var flag = true;
         if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
 
         return flag;
-    } 
+    },
+
+    isTetrominoInBoundry: function (posList) {
+
+    }
 
 }
 

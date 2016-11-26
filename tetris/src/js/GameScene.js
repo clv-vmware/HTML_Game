@@ -9,14 +9,14 @@ var Constants = require('./Constants');
 
 var canvas = document.querySelector('#gameScene');
 var ctx = canvas.getContext('2d');
-var square = new Square(new Vector(0, 0));
-square.setVelocity(new Vector(0, 30));
+// TEST SQUARE CASE
+// var square = new Square(new Vector(0, 0));
+// square.setVelocity(new Vector(0, 1));
 
-var testTetromino = new Tetromino(new Vector(20, 20), 'S');
+var testTetromino = new Tetromino();
+testTetromino.setVelocity(new Vector(0, 1));
 
-var velocity = new Vector(0, 30);
-
-
+var velocity = new Vector(0, 1);
 
 function GameScene () {
     this.blockMap = this.initBlockMap();
@@ -29,12 +29,13 @@ GameScene.prototype = {
         initButtons();
         listenKeyBoardEvent();
     },
+    // 采用 matrix 1， 0.。。 表示 
     initBlockMap: function () {
-        var blockMap = new Array(17);
-        for (var j = 0;j < 17; j++) {
+        var blockMap = new Array(16);
+        for (var j = 0;j < 16; j++) {
             blockMap[j] = new Array(10);
             for (var i = 0;i < 10;i ++) {
-                blockMap[j][i] = false;
+                blockMap[j][i] = 0;
             }
         }
 
@@ -42,8 +43,8 @@ GameScene.prototype = {
     },
 
     initBlockColorMap: function () {
-        var colorMap = new Array(17);
-        for (var j = 0;j < 17; j++) {
+        var colorMap = new Array(16);
+        for (var j = 0;j < 16; j++) {
             colorMap[j] = new Array(10);
             for (var i = 0;i < 10;i ++) {
                 colorMap[j][i] = '';
@@ -54,19 +55,19 @@ GameScene.prototype = {
     },
 
     createSquare: function () {
-        var randX = Math.floor(Math.random() * 17) * 30;
+        var randX = Math.floor(Math.random() * 16);
         square = new Square(new Vector(randX, 0));
-        square.setVelocity(new Vector(0, 30));
+        square.setVelocity(new Vector(0, 1));
     },
 
     updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
         
 
-        var j = Math.floor(pos.x / 30);
-        var i = Math.floor(pos.y / 30);
+        var j = pos.x;
+        var i = pos.y
         // console.log(i, j);
-        this.blockMap[i][j] = true;
+        this.blockMap[i][j] = 1;
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
         this.blockColorMap[i][j] = color;
         
@@ -82,7 +83,7 @@ GameScene.prototype = {
             var xlen = this.blockMap[0].length;
             
             for (var j = 0;j < xlen; j++) {
-                var square = new Square(new Vector(j * 30, i * 30));
+                var square = new Square(new Vector(j, i));
                 if (this.blockMap[i][j]) {
                     // console.log('draw gameScene', i, j, square.getPosition());
                     square.draw(ctx, this.blockColorMap[i][j]);
@@ -118,15 +119,17 @@ function clear() {
 }
 
 function update () {
+    // testTetromino.move();
     
-    var curPos = square.getPosition();
-    var nextPos = new Vector(curPos.x, curPos.y + velocity.y);
+    var curPos = testTetromino.getPosition();
+    var nextPos = testTetromino.getNextPos();
 
         // console.log(nextPos);
-        var nextj = Math.floor(nextPos.x / 30);
-        var nexti = Math.floor(nextPos.y / 30);
-    
-    if (PaintUtils.isInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
+        var nextj = nextPos.x;
+        var nexti = nextPos.y;
+
+    // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
+    if (PaintUtils.isSquareInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
         curPos = square.move();
     }
     else { // hit case
@@ -135,10 +138,11 @@ function update () {
 }
 
 function draw () {
-    testTetromino.draw(ctx);
-    // square.draw(ctx);
-    // gameScene.draw(ctx);
-    // square.setVelocity(new Vector(0, 30));
+    // testTetromino.draw(ctx);
+
+    square.draw(ctx);
+    gameScene.draw(ctx);
+    square.setVelocity(new Vector(0, 30));
 
 
     

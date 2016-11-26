@@ -4,6 +4,7 @@ var Tetromino = require('./Tetromino');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
 var PrintUtils = require('./utils/PrintUtils');
+var MathUtils = require('./utils/MathUtils');
 var Constants = require('./Constants');
 
 
@@ -54,35 +55,56 @@ GameScene.prototype = {
         return colorMap;
     },
 
-    createSquare: function () {
-        var randX = Math.floor(Math.random() * 16);
-        square = new Square(new Vector(randX, 0));
-        square.setVelocity(new Vector(0, 1));
+    createTetromino: function () {
+        testTetromino = new Tetromino();
+        testTetromino.setVelocity(new Vector(0, 1));
     },
 
     updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
-        
+        console.log('in updateBlockMap', pos);
+        var p = MathUtils.convertVectorList(pos);
+        // PrintUtils.printMatrix(p);
 
-        var j = pos.x;
-        var i = pos.y
-        // console.log(i, j);
-        this.blockMap[i][j] = 1;
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
+                this.blockColorMap[i][j] = color;
+            }
+        }
+        PrintUtils.printMatrix(this.blockMap);
+        
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
-        this.blockColorMap[i][j] = color;
         
 
-        this.createSquare();
+        this.createTetromino();
         
+    },
+
+    checkCollide: function (nextPos) {
+        console.log('checkCollide', nextPos);
+        // PrintUtils.printMatrix(this.blockMap);
+        
+        var pos = MathUtils.convertVectorList(nextPos);
+        // PrintUtils.printMatrix(pos);
+
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                pos[i][j] = this.blockMap[i][j] + pos[i][j];
+                if (pos[i][j] > 1) return true;
+            }
+        }
+        console.log(' finish checkCollide');
+        return false;
     },
 
     draw: function (ctx) {
         var ylen = this.blockMap.length;
         
-        for (var i = 0; i < ylen; i++ ) {
+        for (var i = 0; i < 16; i++ ) {
             var xlen = this.blockMap[0].length;
             
-            for (var j = 0;j < xlen; j++) {
+            for (var j = 0;j < 10; j++) {
                 var square = new Square(new Vector(j, i));
                 if (this.blockMap[i][j]) {
                     // console.log('draw gameScene', i, j, square.getPosition());
@@ -123,29 +145,25 @@ function update () {
     
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
+    // console.log('nextpos', nextPos, curPos);
 
-        // console.log(nextPos);
-        var nextj = nextPos.x;
-        var nexti = nextPos.y;
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
-    if (PaintUtils.isSquareInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
-        curPos = square.move();
+    console.log('IF BOUNDRY', PaintUtils.isTetrominoInBoundry(nextPos));
+    if (PaintUtils.isTetrominoInBoundry(nextPos) && !gameScene.checkCollide(nextPos)) {
+        
+        curPos = testTetromino.move();
+        console.log('un hit!', curPos);
     }
-    else { // hit case
-        gameScene.updateBlockMap(curPos, square.color);
+    else { // hit case!
+        console.log('hit!', curPos);
+        gameScene.updateBlockMap(curPos, testTetromino.color);
     }
 }
 
 function draw () {
-    // testTetromino.draw(ctx);
-
-    square.draw(ctx);
+    testTetromino.draw(ctx);
     gameScene.draw(ctx);
-    square.setVelocity(new Vector(0, 30));
-
-
-    
 }
 
 function queue () {
@@ -181,11 +199,9 @@ function listenKeyBoardEvent () {
         else if(event.keyCode === Constants.LEFT_ARROW) {
             
             square.setVelocity(new Vector(-30, 0));
-            // console.log('left arrow ',square.velocity );
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
             square.setVelocity(new Vector(30, 0));
-            // console.log('right arrow ',square.velocity );
         } 
     });
 };

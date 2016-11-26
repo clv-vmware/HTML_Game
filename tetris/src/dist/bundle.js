@@ -33,6 +33,7 @@ var Tetromino = require('./Tetromino');
 var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/PaintUtils');
 var PrintUtils = require('./utils/PrintUtils');
+var MathUtils = require('./utils/MathUtils');
 var Constants = require('./Constants');
 
 
@@ -83,35 +84,56 @@ GameScene.prototype = {
         return colorMap;
     },
 
-    createSquare: function () {
-        var randX = Math.floor(Math.random() * 16);
-        square = new Square(new Vector(randX, 0));
-        square.setVelocity(new Vector(0, 1));
+    createTetromino: function () {
+        testTetromino = new Tetromino();
+        testTetromino.setVelocity(new Vector(0, 1));
     },
 
     updateBlockMap: function (pos, color) {
         // 检查 pos 和 现有堆积的squares 的连通性
-        
+        console.log('in updateBlockMap', pos);
+        var p = MathUtils.convertVectorList(pos);
+        // PrintUtils.printMatrix(p);
 
-        var j = pos.x;
-        var i = pos.y
-        // console.log(i, j);
-        this.blockMap[i][j] = 1;
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
+                this.blockColorMap[i][j] = color;
+            }
+        }
+        PrintUtils.printMatrix(this.blockMap);
+        
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
-        this.blockColorMap[i][j] = color;
         
 
-        this.createSquare();
+        this.createTetromino();
         
+    },
+
+    checkCollide: function (nextPos) {
+        console.log('checkCollide', nextPos);
+        // PrintUtils.printMatrix(this.blockMap);
+        
+        var pos = MathUtils.convertVectorList(nextPos);
+        // PrintUtils.printMatrix(pos);
+
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                pos[i][j] = this.blockMap[i][j] + pos[i][j];
+                if (pos[i][j] > 1) return true;
+            }
+        }
+        console.log(' finish checkCollide');
+        return false;
     },
 
     draw: function (ctx) {
         var ylen = this.blockMap.length;
         
-        for (var i = 0; i < ylen; i++ ) {
+        for (var i = 0; i < 16; i++ ) {
             var xlen = this.blockMap[0].length;
             
-            for (var j = 0;j < xlen; j++) {
+            for (var j = 0;j < 10; j++) {
                 var square = new Square(new Vector(j, i));
                 if (this.blockMap[i][j]) {
                     // console.log('draw gameScene', i, j, square.getPosition());
@@ -152,29 +174,25 @@ function update () {
     
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
+    // console.log('nextpos', nextPos, curPos);
 
-        // console.log(nextPos);
-        var nextj = nextPos.x;
-        var nexti = nextPos.y;
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
-    if (PaintUtils.isSquareInBoundry(nextPos) && (!gameScene.blockMap[nexti][nextj])) {
-        curPos = square.move();
+    console.log('IF BOUNDRY', PaintUtils.isTetrominoInBoundry(nextPos));
+    if (PaintUtils.isTetrominoInBoundry(nextPos) && !gameScene.checkCollide(nextPos)) {
+        
+        curPos = testTetromino.move();
+        console.log('un hit!', curPos);
     }
-    else { // hit case
-        gameScene.updateBlockMap(curPos, square.color);
+    else { // hit case!
+        console.log('hit!', curPos);
+        gameScene.updateBlockMap(curPos, testTetromino.color);
     }
 }
 
 function draw () {
-    // testTetromino.draw(ctx);
-
-    square.draw(ctx);
+    testTetromino.draw(ctx);
     gameScene.draw(ctx);
-    square.setVelocity(new Vector(0, 30));
-
-
-    
 }
 
 function queue () {
@@ -210,18 +228,16 @@ function listenKeyBoardEvent () {
         else if(event.keyCode === Constants.LEFT_ARROW) {
             
             square.setVelocity(new Vector(-30, 0));
-            // console.log('left arrow ',square.velocity );
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
             square.setVelocity(new Vector(30, 0));
-            // console.log('right arrow ',square.velocity );
         } 
     });
 };
 
 module.exports = GameScene;
 
-},{"./Constants":1,"./Square":3,"./Tetromino":4,"./Vector":5,"./utils/EventUtils":7,"./utils/PaintUtils":9,"./utils/PrintUtils":10}],3:[function(require,module,exports){
+},{"./Constants":1,"./Square":3,"./Tetromino":4,"./Vector":5,"./utils/EventUtils":7,"./utils/MathUtils":8,"./utils/PaintUtils":9,"./utils/PrintUtils":10}],3:[function(require,module,exports){
 /**
  * 单个方块类
  */
@@ -304,7 +320,7 @@ var Utils = require('./utils/Utils');
 function Tetromino (type) {
     this.type = type || Utils.getRandomElement(Constants.TETROMINO_TYPES);
     // Tetromino pos  是一个vector list!
-    var randPos = Utils.getRandomNum(0, 16);
+    var randPos = Utils.getRandomNum(0, 10);
     this.pos = this.getSquareListByType(this.type, new Vector(randPos, 0));
     this.color = PaintUtils.getRandomColor();
     this.velocity = new Vector(0, 0);
@@ -321,15 +337,17 @@ Tetromino.prototype = {
     move: function () {
         var pos = this.pos;
         for (var i = 0;i < pos.length; i++) {
-            pos[i].move();
+            pos[i].move(this.velocity);
         }
 
-        // BOUNTRY DETECT
-        if (this.hitBoundry()) {
+        // // BOUNTRY DETECT
+        // if (this.hitBoundry()) {
             
-            this.setVelocity(-this.velocity);
-            console.log('hit!', this.velocity);
-        }
+        //     this.setVelocity(-this.velocity);
+        //     console.log('hit!', this.velocity);
+        // }
+
+        return this.pos;
     },
 
     getNextPos: function () {
@@ -342,7 +360,7 @@ Tetromino.prototype = {
     },
 
     hitBoundry: function () {
-        var list = this.squareList;
+        var list = this.pos;
         for (var i = 0;i < list.length; i++) {
             if (list[i].hitBoundry()) return true;
         }
@@ -396,7 +414,12 @@ Tetromino.prototype = {
     },
 
     getPosition: function () {
-        return this.pos;
+        var list = [];
+        var pos = this.pos;
+        for (var i = 0;i < pos.length; i++) {
+            list.push(pos[i].getPosition());
+        }
+        return list;
     },
 
     getColor: function () {
@@ -474,6 +497,7 @@ var EventUtil = {
 module.exports = EventUtil;
 },{}],8:[function(require,module,exports){
 var Vector = require('../Vector');
+var PrintUtils = require('./PrintUtils');
 
 var MathUtils = {
     vectorAdd: function (v1, v2) {
@@ -490,11 +514,35 @@ var MathUtils = {
         return new Vector(v1.x - v2.x, v1.y - v2.y);
     },
 
+    // convert vector list to matrix
+    convertVectorList: function (list) {
+        console.log('convert curpos ', list);
+        var matrix = new Array(16);
+        for (var i = 0;i < 16; i++ ) {
+            matrix[i] = new Array(10);
+            for (var j = 0;j < 10;j++) {
+                matrix[i][j] = 0;
+            }
+        }
+        
+
+        for(var s = 0;s < list.length;s++) {
+            
+            var x = list[s].x;
+            var y = list[s].y;
+            console.log('convert', x, y);
+            matrix[y][x] = 1;
+        }
+        // PrintUtils.printMatrix(matrix);
+
+        return matrix;
+    }
+
 
 }
 
 module.exports = MathUtils;
-},{"../Vector":5}],9:[function(require,module,exports){
+},{"../Vector":5,"./PrintUtils":10}],9:[function(require,module,exports){
 /**
  * 
  */
@@ -570,7 +618,7 @@ var PaintUtils = {
         }
     },
 
-    isSquareInBoundry: function (pos) {
+    ifInBoundry: function (pos) {
         var flag = true;
         if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
@@ -579,7 +627,16 @@ var PaintUtils = {
     },
 
     isTetrominoInBoundry: function (posList) {
-
+        
+        var flag = true;
+        var len = posList.length;
+        for (var i = 0;i < len; i++) {
+            if (!this.ifInBoundry(posList[i])) {
+                return false;
+            }
+        }
+        // console.log('in boundry', posList, flag);
+        return flag;
     }
 
 }

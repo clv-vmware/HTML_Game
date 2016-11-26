@@ -12,7 +12,7 @@ var Utils = require('./utils/Utils');
 function Tetromino (type) {
     this.type = type || Utils.getRandomElement(Constants.TETROMINO_TYPES);
     // Tetromino pos  是一个vector list!
-    var randPos = Utils.getRandomNum(0, 16);
+    var randPos = Utils.getRandomNum(0, 10);
     this.pos = this.getSquareListByType(this.type, new Vector(randPos, 0));
     this.color = PaintUtils.getRandomColor();
     this.velocity = new Vector(0, 0);
@@ -29,15 +29,17 @@ Tetromino.prototype = {
     move: function () {
         var pos = this.pos;
         for (var i = 0;i < pos.length; i++) {
-            pos[i].move();
+            pos[i].move(this.velocity);
         }
 
-        // BOUNTRY DETECT
-        if (this.hitBoundry()) {
+        // // BOUNTRY DETECT
+        // if (this.hitBoundry()) {
             
-            this.setVelocity(-this.velocity);
-            console.log('hit!', this.velocity);
-        }
+        //     this.setVelocity(-this.velocity);
+        //     console.log('hit!', this.velocity);
+        // }
+
+        return this.pos;
     },
 
     getNextPos: function () {
@@ -50,7 +52,7 @@ Tetromino.prototype = {
     },
 
     hitBoundry: function () {
-        var list = this.squareList;
+        var list = this.pos;
         for (var i = 0;i < list.length; i++) {
             if (list[i].hitBoundry()) return true;
         }
@@ -104,7 +106,12 @@ Tetromino.prototype = {
     },
 
     getPosition: function () {
-        return this.pos;
+        var list = [];
+        var pos = this.pos;
+        for (var i = 0;i < pos.length; i++) {
+            list.push(pos[i].getPosition());
+        }
+        return list;
     },
 
     getColor: function () {

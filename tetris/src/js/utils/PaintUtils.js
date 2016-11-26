@@ -73,7 +73,7 @@ var PaintUtils = {
         }
     },
 
-    isSquareInBoundry: function (pos) {
+    ifInBoundry: function (pos) {
         var flag = true;
         if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
@@ -82,7 +82,16 @@ var PaintUtils = {
     },
 
     isTetrominoInBoundry: function (posList) {
-
+        
+        var flag = true;
+        var len = posList.length;
+        for (var i = 0;i < len; i++) {
+            if (!this.ifInBoundry(posList[i])) {
+                return false;
+            }
+        }
+        // console.log('in boundry', posList, flag);
+        return flag;
     }
 
 }

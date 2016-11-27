@@ -95,9 +95,19 @@ GameScene.prototype = {
         for (var i = 0;i < 16; i++ ) {
             for (var j = 0;j < 10;j++) {
                 this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
-                this.blockColorMap[i][j] = color;
+                
             }
         }
+
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                if (p[i][j] > 0) {
+                    this.blockColorMap[i][j] = color;
+                }
+                
+            }
+        }
+        
         // PrintUtils.printMatrix(this.blockMap);
         
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
@@ -106,16 +116,35 @@ GameScene.prototype = {
     },
 
     checkCollide: function (nextPos) {
+        // console.log('collide next', nextPos);
         var pos = MathUtils.convertVectorList(nextPos);
         // PrintUtils.printMatrix(pos);
 
         for (var i = 0;i < 16; i++ ) {
             for (var j = 0;j < 10;j++) {
                 pos[i][j] = this.blockMap[i][j] + pos[i][j];
-                if (pos[i][j] > 1) return true;
+                if (pos[i][j] > 1 && testTetromino.velocity.x === 0) 
+                {
+                    PrintUtils.printMatrix(pos);
+                    return true;
+                }
             }
         }
         return false;
+    },
+
+
+    getCollideMap: function (pos) {
+        var pos = MathUtils.convertVectorList(pos);
+        for (var i = 0;i < 16; i++ ) {
+            for (var j = 0;j < 10;j++) {
+                pos[i][j] = this.blockMap[i][j] + pos[i][j];
+                    
+            }
+        }
+        // PrintUtils.printMatrix(pos);
+
+        return pos;
     },
 
     draw: function (ctx) {
@@ -137,7 +166,7 @@ GameScene.prototype = {
 // DEFINE GLOBAL VARS
 var gameScene = new GameScene();
 
-var fps = 5;
+var fps = 3;
 var now;
 var then = Date.now();
 var interval = 1000 / fps;
@@ -164,19 +193,43 @@ function clear() {
 function update () {
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
+    // console.log('nextpo', curPos, nextPos);
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
-    if (PaintUtils.isTetrominoInBoundry(nextPos) && !gameScene.checkCollide(nextPos)) {
-        curPos = testTetromino.move();
+    // console.log('collide',PaintUtils.isTetrominoInBoundry(nextPos),  gameScene.checkCollide(nextPos), nextPos);
+    // TODO : 此处逻辑混乱，重新理清楚 ！！！
+    if (PaintUtils.isTetrominoInBoundry(nextPos)) {
+        if (!gameScene.checkCollide(nextPos)) {
+            // var collideMap = this.getCollideMap();
+            curPos = testTetromino.move();
+        }
+        else  if (testTetromino.velocity.x !== 0) {
+            testTetromino.setVelocity(new Vector(0, 1));
+        }
+        else { // hit case!
+            console.log('hit!', curPos);
+            gameScene.updateBlockMap(curPos, testTetromino.color);
+        }
     }
-    else { // hit case!
-        gameScene.updateBlockMap(curPos, testTetromino.color);
+    else {// OUT OF BOUNDRY CASE
+        // 向左会触发 here
+        console.log('hit the boundry case!');
+        if (testTetromino.velocity.x !== 0) {
+            testTetromino.setVelocity(new Vector(0, 1));
+        }
+        else { // hit case!
+            console.log('hit!', curPos);
+            gameScene.updateBlockMap(curPos, testTetromino.color);
+        }
     }
+    
+    
 }
 
 function draw () {
     testTetromino.draw(ctx);
     gameScene.draw(ctx);
+    testTetromino.setVelocity(new Vector(0, 1));
 }
 
 function queue () {
@@ -204,14 +257,14 @@ function initButtons () {
 function listenKeyBoardEvent () {
     EventUtils.addHandler(window, 'keydown', function (event) {
         if(event.keyCode === Constants.DOWN_ARROW) {
-            square.setVelocity(new Vector(0, 60));
+            testTetromino.setVelocity(new Vector(0, 2));
         }
         else if(event.keyCode === Constants.LEFT_ARROW) {
             
-            square.setVelocity(new Vector(-30, 0));
+            testTetromino.setVelocity(new Vector(-1, 0));
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            square.setVelocity(new Vector(30, 0));
+            testTetromino.setVelocity(new Vector(1, 0));
         } 
     });
 };
@@ -295,6 +348,7 @@ var Constants = require('./Constants');
 var Vector = require('./Vector');
 var Square = require('./Square');
 var PaintUtils = require('./utils/PaintUtils');
+var PrintUtils = require('./utils/PrintUtils');
 var MathUtils = require('./utils/MathUtils');
 var Utils = require('./utils/Utils');
 
@@ -315,15 +369,59 @@ Tetromino.prototype = {
         }
     },
 
-    move: function () {
-        var pos = this.pos;
-        for (var i = 0;i < pos.length; i++) {
-            pos[i].move(this.velocity);
+    batchMove: function (v) {
+        for (var i = 0;i < this.pos.length; i++) {
+            
+            this.pos[i].pos.add(v);
+            // console.log('batch', this.pos[i]);
         }
+    },
+
+    move: function (collideMap) {
+        var pos = this.getNextPos();
+        // var p = MathUtils.convertVectorList(pos);
+        // PrintUtils.printColInMatrix(p, 0);
+
+        // TODO : 向左右移动时的碰撞检测！！！
+        
+        for (var j = 0;j < pos.length; j++) {
+
+            if (pos[j].x + 1 > Constants.GAMESCENE_WIDTH) {
+                console.log('IN > WIDTH CASE', pos);
+                this.setVelocity(new Vector(0, 0));
+                break;
+            }
+
+            if (pos[j].x < 0) {
+                console.log('IN < 0 CASE', pos);
+                this.setVelocity(new Vector(0, 0));
+                // this.pos.x = 0;
+                this.batchMove(new Vector(1, 0));
+                break;
+            }
+
+            // if (this.pos.y + 1 > Constants.GAMESCENE_HEIGHT) {
+            //     this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+            //     this.pos.y = Constants.GAMESCENE_HEIGHT - 1;
+            //     break;
+            // }
+
+            if (this.pos.y < 0) {
+                this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+                this.pos.y = 0;
+                break;
+            }
+        }
+
+        for (var i = 0;i < this.pos.length; i++) {
+            this.pos[i].move(this.velocity);
+        }
+        
         return this.pos;
     },
 
     getNextPos: function () {
+        // console.log('in nextpos', this.velocity);
         var list = [];
         var pos = this.pos;
         for (var i = 0;i < pos.length; i++) {
@@ -404,7 +502,7 @@ Tetromino.prototype = {
 };
 
 module.exports = Tetromino;
-},{"./Constants":1,"./Square":3,"./Vector":5,"./utils/MathUtils":8,"./utils/PaintUtils":9,"./utils/Utils":11}],5:[function(require,module,exports){
+},{"./Constants":1,"./Square":3,"./Vector":5,"./utils/MathUtils":8,"./utils/PaintUtils":9,"./utils/PrintUtils":10,"./utils/Utils":11}],5:[function(require,module,exports){
 /**
  * 
  */
@@ -589,9 +687,9 @@ var PaintUtils = {
 
     ifInBoundry: function (pos) {
         var flag = true;
-        if (pos.x < 0 || pos.x >= Constants.GAMESCENE_WIDTH) flag = false;
+        if (pos.x < 0 || pos.x > Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
-
+        console.log(' IN BOUNDRY', pos.x, flag);
         return flag;
     },
 
@@ -615,16 +713,20 @@ module.exports = PaintUtils;
 var PrintUtils = {
 
     printMatrix: function (matrix) {
+        console.log('-------------matrix start--------------');
         for (var i = 0; i < matrix.length; i++) {
             var row = '';
             for (var j = 0; j < matrix[0].length; j++) {
                 row += matrix[i][j] + ' ';
             }
+            
             console.log(row);
         }
+        console.log('-------------matrix end--------------');
     },
 
     printColInMatrix: function (matrix, col) {
+        console.log('-------------matrix start--------------');
         var row = '';
         
         for (var i = 0; i < matrix.length; i++) {
@@ -634,8 +736,8 @@ var PrintUtils = {
             }
             
         }
-
         console.log(row);
+        console.log('-------------matrix end--------------');
     },
 }
 

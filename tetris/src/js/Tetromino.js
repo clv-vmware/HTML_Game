@@ -6,6 +6,7 @@ var Constants = require('./Constants');
 var Vector = require('./Vector');
 var Square = require('./Square');
 var PaintUtils = require('./utils/PaintUtils');
+var PrintUtils = require('./utils/PrintUtils');
 var MathUtils = require('./utils/MathUtils');
 var Utils = require('./utils/Utils');
 
@@ -26,15 +27,59 @@ Tetromino.prototype = {
         }
     },
 
-    move: function () {
-        var pos = this.pos;
-        for (var i = 0;i < pos.length; i++) {
-            pos[i].move(this.velocity);
+    batchMove: function (v) {
+        for (var i = 0;i < this.pos.length; i++) {
+            
+            this.pos[i].pos.add(v);
+            // console.log('batch', this.pos[i]);
         }
+    },
+
+    move: function (collideMap) {
+        var pos = this.getNextPos();
+        // var p = MathUtils.convertVectorList(pos);
+        // PrintUtils.printColInMatrix(p, 0);
+
+        // TODO : 向左右移动时的碰撞检测！！！
+        
+        for (var j = 0;j < pos.length; j++) {
+
+            if (pos[j].x + 1 > Constants.GAMESCENE_WIDTH) {
+                console.log('IN > WIDTH CASE', pos);
+                this.setVelocity(new Vector(0, 0));
+                break;
+            }
+
+            if (pos[j].x < 0) {
+                console.log('IN < 0 CASE', pos);
+                this.setVelocity(new Vector(0, 0));
+                // this.pos.x = 0;
+                this.batchMove(new Vector(1, 0));
+                break;
+            }
+
+            // if (this.pos.y + 1 > Constants.GAMESCENE_HEIGHT) {
+            //     this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+            //     this.pos.y = Constants.GAMESCENE_HEIGHT - 1;
+            //     break;
+            // }
+
+            if (this.pos.y < 0) {
+                this.velocity = new Vector(this.velocity.x, -this.velocity.y);
+                this.pos.y = 0;
+                break;
+            }
+        }
+
+        for (var i = 0;i < this.pos.length; i++) {
+            this.pos[i].move(this.velocity);
+        }
+        
         return this.pos;
     },
 
     getNextPos: function () {
+        // console.log('in nextpos', this.velocity);
         var list = [];
         var pos = this.pos;
         for (var i = 0;i < pos.length; i++) {

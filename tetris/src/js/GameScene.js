@@ -171,7 +171,6 @@ function clear() {
 function update () {
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
-    console.log('nextpos', nextPos);
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
     // console.log('collide',PaintUtils.isTetrominoInBoundry(nextPos),  gameScene.checkCollide(nextPos), nextPos);
@@ -243,6 +242,11 @@ function listenKeyBoardEvent () {
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
             testTetromino.setVelocity(new Vector(1, 0));
+        } 
+
+        // UP ARROW: CHANGE Tetromino SHAPE
+        else if(event.keyCode === Constants.UP_ARROW) {
+            testTetromino.changeShape();
         } 
     });
 };

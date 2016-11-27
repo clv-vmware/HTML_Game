@@ -25,8 +25,8 @@ var PaintUtils = {
         
         ctx.fillStyle = color || '#222222';
         ctx.beginPath();
-        // ctx.fillRect(pos.x, pos.y, size, size);
-        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE, 5)
+        // this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE, 5);
+        this.drawBrick(ctx, color, pos);
         // console.log('in draw', this.position);
         ctx.closePath();
         ctx.fill();
@@ -49,6 +49,20 @@ var PaintUtils = {
         ctx.shadowBlur = 0;
         ctx.fillStyle = fillStyle;
         ctx.stroke();
+        ctx.fill();
+    },
+
+    drawBrick: function (ctx, color, pos) {
+        ctx.fillStyle = color || '#222222';
+        ctx.lineWidth=2;
+        ctx.strokeStyle = '#57585a';
+        ctx.beginPath();
+        ctx.strokeRect(pos.x + 0.1, pos.y + 0.1,Constants.SQUARE_SIZE - 0.2, Constants.SQUARE_SIZE - 0.2 );
+        // ctx.globalAlpha=0.3;
+        ctx.fillRect(pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE);
+        // ctx.globalAlpha=0.5;
+        ctx.fillRect(pos.x + 5, pos.y + 5, Constants.SQUARE_SIZE - 10, Constants.SQUARE_SIZE - 10);
+        ctx.closePath();
         ctx.fill();
     },
 
@@ -77,7 +91,7 @@ var PaintUtils = {
         var flag = true;
         if (pos.x < 0 || pos.x > Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
-        console.log(' IN BOUNDRY', pos.x, flag);
+        // console.log(' IN BOUNDRY', pos.x, flag);
         return flag;
     },
 

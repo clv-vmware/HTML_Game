@@ -35,6 +35,17 @@ var MathUtils = {
         // PrintUtils.printMatrix(matrix);
 
         return matrix;
+    },
+
+    clearOneRow: function (map, row) {
+        for (var i = row;i >0; i-- ) {
+            for (var j = 0;j < 10;j++) {
+                map[i][j] = map[i - 1][j];
+            }
+        }
+        for (var k = 0;k < 10;k++) {
+            map[0][k] = 0;
+        }
     }
 
 

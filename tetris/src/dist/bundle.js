@@ -13,8 +13,8 @@ var Constants = {
 
     
 
-    // COLOR_LIST: ['#C46564', '#F0E999', '#B8C99D', '#9B726F', '#EEB15B']
-    COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA'],
+    // COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA'],
+    COLOR_LIST:  ['#00e1fe', '#54d600', '#c874fe', '#fe2336', '#f6941d'],
 
     TETROMINO_TYPES: ['O', 'T', 'L', 'Z', 'S'],
 
@@ -93,11 +93,18 @@ GameScene.prototype = {
         // PrintUtils.printMatrix(p);
 
         for (var i = 0;i < 16; i++ ) {
+            var rowFullFlag = true;
             for (var j = 0;j < 10;j++) {
                 this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
+                if (this.blockMap[i][j] === 0) rowFullFlag = false;
                 
             }
+            if (rowFullFlag) {
+                // clean this row
+                MathUtils.clearOneRow(this.blockMap, i);
+            }
         }
+
 
         for (var i = 0;i < 16; i++ ) {
             for (var j = 0;j < 10;j++) {
@@ -193,7 +200,7 @@ function clear() {
 function update () {
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
-    // console.log('nextpo', curPos, nextPos);
+    console.log('nextpos', nextPos);
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
     // console.log('collide',PaintUtils.isTetrominoInBoundry(nextPos),  gameScene.checkCollide(nextPos), nextPos);
@@ -355,7 +362,7 @@ var Utils = require('./utils/Utils');
 function Tetromino (type) {
     this.type = type || Utils.getRandomElement(Constants.TETROMINO_TYPES);
     // Tetromino pos  是一个vector list!
-    var randPos = Utils.getRandomNum(0, 10);
+    var randPos = Utils.getRandomNum(2, 8);
     this.pos = this.getSquareListByType(this.type, new Vector(randPos, 0));
     this.color = PaintUtils.getRandomColor();
     this.velocity = new Vector(0, 0);
@@ -389,6 +396,7 @@ Tetromino.prototype = {
             if (pos[j].x + 1 > Constants.GAMESCENE_WIDTH) {
                 console.log('IN > WIDTH CASE', pos);
                 this.setVelocity(new Vector(0, 0));
+                // this.batchMove(new Vector(-1, 0));
                 break;
             }
 
@@ -603,6 +611,17 @@ var MathUtils = {
         // PrintUtils.printMatrix(matrix);
 
         return matrix;
+    },
+
+    clearOneRow: function (map, row) {
+        for (var i = row;i >0; i-- ) {
+            for (var j = 0;j < 10;j++) {
+                map[i][j] = map[i - 1][j];
+            }
+        }
+        for (var k = 0;k < 10;k++) {
+            map[0][k] = 0;
+        }
     }
 
 
@@ -637,8 +656,8 @@ var PaintUtils = {
         
         ctx.fillStyle = color || '#222222';
         ctx.beginPath();
-        // ctx.fillRect(pos.x, pos.y, size, size);
-        this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE, 5)
+        // this.drawRoundedRect (ctx, ctx.fillStyle, ctx.fillStyle, pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE, 5);
+        this.drawBrick(ctx, color, pos);
         // console.log('in draw', this.position);
         ctx.closePath();
         ctx.fill();
@@ -661,6 +680,20 @@ var PaintUtils = {
         ctx.shadowBlur = 0;
         ctx.fillStyle = fillStyle;
         ctx.stroke();
+        ctx.fill();
+    },
+
+    drawBrick: function (ctx, color, pos) {
+        ctx.fillStyle = color || '#222222';
+        ctx.lineWidth=2;
+        ctx.strokeStyle = '#57585a';
+        ctx.beginPath();
+        ctx.strokeRect(pos.x + 0.1, pos.y + 0.1,Constants.SQUARE_SIZE - 0.2, Constants.SQUARE_SIZE - 0.2 );
+        // ctx.globalAlpha=0.3;
+        ctx.fillRect(pos.x, pos.y, Constants.SQUARE_SIZE, Constants.SQUARE_SIZE);
+        // ctx.globalAlpha=0.5;
+        ctx.fillRect(pos.x + 5, pos.y + 5, Constants.SQUARE_SIZE - 10, Constants.SQUARE_SIZE - 10);
+        ctx.closePath();
         ctx.fill();
     },
 
@@ -689,7 +722,7 @@ var PaintUtils = {
         var flag = true;
         if (pos.x < 0 || pos.x > Constants.GAMESCENE_WIDTH) flag = false;
         if (pos.y < 0 || pos.y >= Constants.GAMESCENE_HEIGHT) flag = false;
-        console.log(' IN BOUNDRY', pos.x, flag);
+        // console.log(' IN BOUNDRY', pos.x, flag);
         return flag;
     },
 

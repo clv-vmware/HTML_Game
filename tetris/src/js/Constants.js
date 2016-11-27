@@ -12,8 +12,8 @@ var Constants = {
 
     
 
-    // COLOR_LIST: ['#C46564', '#F0E999', '#B8C99D', '#9B726F', '#EEB15B']
-    COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA'],
+    // COLOR_LIST:  ['#EFEECC', '#FE8B05', '#FE0557', '#400403', '#0AABBA'],
+    COLOR_LIST:  ['#00e1fe', '#54d600', '#c874fe', '#fe2336', '#f6941d'],
 
     TETROMINO_TYPES: ['O', 'T', 'L', 'Z', 'S'],
 

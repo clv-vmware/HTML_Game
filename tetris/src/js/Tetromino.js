@@ -13,7 +13,7 @@ var Utils = require('./utils/Utils');
 function Tetromino (type) {
     this.type = type || Utils.getRandomElement(Constants.TETROMINO_TYPES);
     // Tetromino pos  是一个vector list!
-    var randPos = Utils.getRandomNum(0, 10);
+    var randPos = Utils.getRandomNum(2, 8);
     this.pos = this.getSquareListByType(this.type, new Vector(randPos, 0));
     this.color = PaintUtils.getRandomColor();
     this.velocity = new Vector(0, 0);
@@ -47,6 +47,7 @@ Tetromino.prototype = {
             if (pos[j].x + 1 > Constants.GAMESCENE_WIDTH) {
                 console.log('IN > WIDTH CASE', pos);
                 this.setVelocity(new Vector(0, 0));
+                // this.batchMove(new Vector(-1, 0));
                 break;
             }
 

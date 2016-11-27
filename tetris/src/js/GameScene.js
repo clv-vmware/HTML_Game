@@ -64,11 +64,18 @@ GameScene.prototype = {
         // PrintUtils.printMatrix(p);
 
         for (var i = 0;i < 16; i++ ) {
+            var rowFullFlag = true;
             for (var j = 0;j < 10;j++) {
                 this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
+                if (this.blockMap[i][j] === 0) rowFullFlag = false;
                 
             }
+            if (rowFullFlag) {
+                // clean this row
+                MathUtils.clearOneRow(this.blockMap, i);
+            }
         }
+
 
         for (var i = 0;i < 16; i++ ) {
             for (var j = 0;j < 10;j++) {
@@ -164,7 +171,7 @@ function clear() {
 function update () {
     var curPos = testTetromino.getPosition();
     var nextPos = testTetromino.getNextPos();
-    // console.log('nextpo', curPos, nextPos);
+    console.log('nextpos', nextPos);
 
     // 保证nextpos  在范围内，并且nextpos所在的 i ,j 在map内都为false
     // console.log('collide',PaintUtils.isTetrominoInBoundry(nextPos),  gameScene.checkCollide(nextPos), nextPos);

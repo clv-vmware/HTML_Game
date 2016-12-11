@@ -1,3 +1,6 @@
+/**
+ * TODO: 结束界面 逻辑？ 
+ */
 var Vector = require('./Vector');
 var Square = require('./Square');
 var Tetromino = require('./Tetromino');
@@ -86,7 +89,6 @@ GameScene.prototype = {
         // PrintUtils.printMatrix(this.blockMap);
         
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
-        this.isOverFlow();
         this.createTetromino();
     },
 

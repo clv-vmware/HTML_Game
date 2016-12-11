@@ -1,0 +1,33 @@
+<html>
+    <head></head>
+    <body>
+        <script>
+            // global
+            var land = initLand();
+
+            function initLand () {
+                var land = new Array(16);
+                for (var i = 0;i < 16;i++) {
+                    land[i] = new Array(10);
+                    for (var j = 0;i < 10;j++) {
+                        land[i][j] = 0;
+                    }
+                }
+                return land;
+            }
+
+            function tetromino () {
+                this.shape = [[1, 1], [1, 1]];
+                this.topLeft = {
+                    row: 0,
+                    col: 4
+                }
+            }
+
+            function drawBlock () {
+
+            }
+        </script>
+        <div></div>
+    </body>
+</html>

@@ -119,22 +119,22 @@ var GameBackground = cc.Layer.extend({
     update: function () {
         var winSize = cc.director.getWinSize();
         this._bg1.x -= Math.ceil(this.speed * 0.02);
-        if (thi._bg1.x < -parseInt(winSize.width)) {
+        if (this._bg1.x < -parseInt(winSize.width)) {
             this._bg1.x = 0;
         }
 
         this._bg2.x -= Math.ceil(this.speed * 0.2);
-        if (thi._bg2.x < -parseInt(winSize.width)) {
+        if (this._bg2.x < -parseInt(winSize.width)) {
             this._bg2.x = 0;
         }
 
         this._bg3.x -= Math.ceil(this.speed * 0.5);
-        if (thi._bg3.x < -parseInt(winSize.width)) {
+        if (this._bg3.x < -parseInt(winSize.width)) {
             this._bg3.x = 0;
         }
 
         this._bg4.x -= Math.ceil(this.speed * 1);
-        if (thi._bg4.x < -parseInt(winSize.width)) {
+        if (this._bg4.x < -parseInt(winSize.width)) {
             this._bg4.x = 0;
         }
     }

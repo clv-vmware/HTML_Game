@@ -115,7 +115,6 @@ GameScene.prototype = {
         // PrintUtils.printMatrix(this.blockMap);
         
         // console.log(pos, i, j, color, PrintUtils.printColInMatrix(this.blockColorMap, 0));
-        this.isOverFlow();
         this.createTetromino();
     },
 

@@ -46,6 +46,16 @@ var MathUtils = {
         for (var k = 0;k < 10;k++) {
             map[0][k] = 0;
         }
+    },
+
+    clearAllRows: function (map) {
+        var rowLen = map.length;
+        var colLen = map[0].length;
+        for (var i = 0;i < rowLen; i++) {
+            for (var j = 0;j < rowLen; j++) {
+                map[i][j] = 0;
+            }
+        }
     }
 
 

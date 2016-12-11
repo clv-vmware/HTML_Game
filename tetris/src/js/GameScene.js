@@ -198,13 +198,13 @@ function update () {
             testTetromino.setVelocity(new Vector(0, 1));
         }
         else { // hit case!
-            console.log('hit!', curPos);
+            // console.log('hit!', curPos);
             gameScene.updateBlockMap(curPos, testTetromino.color);
         }
     }
     else {// OUT OF BOUNDRY CASE
         // 向左会触发 here
-        console.log('hit the boundry case!');
+        // console.log('hit the boundry case!');
         if (testTetromino.velocity.x !== 0) {
             testTetromino.setVelocity(new Vector(0, 1));
         }
@@ -212,7 +212,7 @@ function update () {
 
         }
         else { // hit case!
-            console.log('hit!', curPos);
+            // console.log('hit!', curPos);
             gameScene.updateBlockMap(curPos, testTetromino.color);
         }
     }
@@ -246,12 +246,15 @@ function initButtons () {
         queue();
     });
 
-    var gameOverBtn = document.querySelector("#gameOver");
     var gameOverModal = document.querySelector("#gameOverModal");
-    
     gameOverModal.style.display = "none";
-    EventUtils.addHandler(gameOverBtn, 'click', function () {
-        
+
+    var newGameBtn = document.querySelector("#newGame");
+    EventUtils.addHandler(newGameBtn, 'click', function () {
+        MathUtils.clearAllRows(gameScene.blockMap);
+        gameOverModal.style.display = "none";
+        runningFlag = true;
+        queue();
     });
 
 

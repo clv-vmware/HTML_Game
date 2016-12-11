@@ -66,9 +66,11 @@ GameScene.prototype = {
         // 检查 pos 和 现有堆积的squares 的连通性
         var p = MathUtils.convertVectorList(pos);
         // PrintUtils.printMatrix(p);
-
+        var rowsPlaceHolder = new Array(16);
+        
         for (var i = 0;i < 16; i++ ) {
             var rowFullFlag = true;
+            rowsPlaceHolder[i] = false;
             for (var j = 0;j < 10;j++) {
                 // update color
                 if (p[i][j] > 0) {
@@ -76,6 +78,7 @@ GameScene.prototype = {
                 }
                 this.blockMap[i][j] = this.blockMap[i][j] + p[i][j];
                 if (this.blockMap[i][j] === 0) rowFullFlag = false;
+                if (this.blockMap[i][j] > 0) rowsPlaceHolder[i] = true;
                 
             }
             if (rowFullFlag) {
@@ -83,8 +86,13 @@ GameScene.prototype = {
                 MathUtils.clearOneRow(this.blockMap, i);
                 score++;
             }
-            
-
+        }
+        // GAME OVER detect
+        var everyRowIsPlaced = rowsPlaceHolder.every(function (item) {return item === true});
+        if (everyRowIsPlaced) {
+            runningFlag = false;
+            // open the GAME OVER modal!
+            gameOverModal.style.display = "block";
         }
         // PrintUtils.printMatrix(this.blockMap);
         
@@ -243,9 +251,7 @@ function initButtons () {
     
     gameOverModal.style.display = "none";
     EventUtils.addHandler(gameOverBtn, 'click', function () {
-        runningFlag = false;
-        // open the GAME OVER modal!
-        gameOverModal.style.display = "block";
+        
     });
 
 

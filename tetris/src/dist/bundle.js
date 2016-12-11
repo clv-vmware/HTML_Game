@@ -27,6 +27,9 @@ var Constants = {
 
 module.exports = Constants;
 },{"./Vector":5}],2:[function(require,module,exports){
+/**
+ * TODO: 结束界面 逻辑？ 
+ */
 var Vector = require('./Vector');
 var Square = require('./Square');
 var Tetromino = require('./Tetromino');
@@ -259,11 +262,22 @@ function initButtons () {
     });
 
     var runBtn = document.querySelector("#run");
-    
     EventUtils.addHandler(runBtn, 'click', function () {
         runningFlag = true;
         queue();
     });
+
+    var gameOverBtn = document.querySelector("#gameOver");
+    var gameOverModal = document.querySelector("#gameOverModal");
+    
+    gameOverModal.style.display = "none";
+    EventUtils.addHandler(gameOverBtn, 'click', function () {
+        runningFlag = false;
+        // open the GAME OVER modal!
+        gameOverModal.style.display = "block";
+    });
+
+
 }
 
 function listenKeyBoardEvent () {

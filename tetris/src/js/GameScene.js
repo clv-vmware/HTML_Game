@@ -233,11 +233,22 @@ function initButtons () {
     });
 
     var runBtn = document.querySelector("#run");
-    
     EventUtils.addHandler(runBtn, 'click', function () {
         runningFlag = true;
         queue();
     });
+
+    var gameOverBtn = document.querySelector("#gameOver");
+    var gameOverModal = document.querySelector("#gameOverModal");
+    
+    gameOverModal.style.display = "none";
+    EventUtils.addHandler(gameOverBtn, 'click', function () {
+        runningFlag = false;
+        // open the GAME OVER modal!
+        gameOverModal.style.display = "block";
+    });
+
+
 }
 
 function listenKeyBoardEvent () {

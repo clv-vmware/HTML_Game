@@ -19,33 +19,36 @@ function GameScene () {
     this.drawBricks();
 }
 
-GameScene.prototype.init = function () {
-    loop();
-    
-    initButtons();
-    listenKeyBoardEvent();
-};
+GameScene.prototype = {
+    init: function () {
+        loop();
+        initButtons();
+        listenKeyBoardEvent();
+    },
 
-GameScene.prototype.draw = function () {
+    draw: function () {
 
-};
+    },
 
-GameScene.prototype.update = function () {
-    testBall.move();
-};
-
-
-// 5 * 10 COLOR_BAR: 根据当前bricksMap update bricks
-GameScene.prototype.drawBricks = function () {
-    for (var i = 0;i < 5;i++) {
-        for (var j = 0;j < 10;j++) {
-            if (this.bricksMap[i][j] > 0) {
-                var pos = new Vector((j + 1) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i + 1) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
-                PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], pos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+    update: function () {
+        testBall.move();
+        checkColision(testBall, );
+        update
+    },
+    // 5 * 10 COLOR_BAR: 根据当前bricksMap update bricks
+    drawBricks: function () {
+        for (var i = 0;i < 5;i++) {
+            for (var j = 0;j < 10;j++) {
+                if (this.bricksMap[i][j] > 0) {
+                    var pos = new Vector((j + 1) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i + 1) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+                    PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], pos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+                }
             }
         }
-    }
+    },
+
 };
+
 
 
 // UTILS FUNC

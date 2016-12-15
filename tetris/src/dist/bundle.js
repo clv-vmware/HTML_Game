@@ -28,7 +28,7 @@ var Constants = {
 module.exports = Constants;
 },{"./Vector":5}],2:[function(require,module,exports){
 /**
- * TODO: 结束界面 逻辑？ 
+ *  
  */
 var Vector = require('./Vector');
 var Square = require('./Square');

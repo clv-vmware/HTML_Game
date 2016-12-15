@@ -1,5 +1,5 @@
 /**
- * TODO: 结束界面 逻辑？ 
+ *  
  */
 var Vector = require('./Vector');
 var Square = require('./Square');

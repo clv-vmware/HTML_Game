@@ -10,7 +10,7 @@ let PaintUtil = {
     drawCircle: function (ctx, color, pos, r) {
         ctx.beginPath();
         ctx.fillStyle = color;
-        ctx.arc(x, y, r, 0, Math.PI * 2, true);
+        ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
         ctx.fill();
     }
 }

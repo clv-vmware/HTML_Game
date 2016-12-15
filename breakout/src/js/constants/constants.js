@@ -1,12 +1,15 @@
 var Constants = {
-    BRICK_WIDTH: 30,
-    BRICK_HEIGHT: 10,
+    GAMESCENE_HEIGHT: 300,
+    GAMESCENE_WIDTH: 600,
+
+    BRICK_WIDTH: 40,
+    BRICK_HEIGHT: 20,
     BRICK_MARGIN: 5,
 
     COLOR_BAR: ['red', 'yellow', 'green', '#03fcfb', 'blue'],
 
     BALL_COLOR: 'cornflowerblue',
-    BALL_RADIUS: 30, 
+    BALL_RADIUS: 10, 
 };
 
 module.exports = Constants;

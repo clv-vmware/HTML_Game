@@ -256,8 +256,6 @@ function initButtons () {
         runningFlag = true;
         queue();
     });
-
-
 }
 
 function listenKeyBoardEvent () {

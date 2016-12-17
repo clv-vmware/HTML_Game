@@ -14,11 +14,26 @@ function Ball (pos, velocity) {
 
 Ball.prototype = {
     draw: function (ctx) {
-        console.log('IN DRAW', this.pos);
+        
         PaintUtils.drawCircle(ctx, Constants.BALL_COLOR, this.pos, Constants.BALL_RADIUS);
     },
-    move: function () {
+    move: function (bricksMap) {
+        console.log('IN MOVE', bricksMap);
         this.pos = this.pos.add(this.velocity);
+        // 计算出当前pos 在 bricks map 里的 i j 坐标
+        var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
+        var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+        //  如果是实心， 更新checkmap 为0（消失）, 速度反向
+        console.log(GridX, GridY);
+        // y 要在bricks 范围之内才进行collision check
+        if (GridY < 5) {
+            console.log(bricksMap[GridY][GridX]);
+            if (bricksMap[GridY][GridX] === 1) {
+                bricksMap[GridY][GridX] = 0;
+                this.velocity.y = -this.velocity.y;
+            }
+        }
+        
         // BOUNDRY DETECT
         if (this.pos.x - Constants.BALL_RADIUS < 0) {
             this.pos.x = Constants.BALL_RADIUS;

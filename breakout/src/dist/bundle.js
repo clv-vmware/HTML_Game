@@ -3,6 +3,7 @@ var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/paintUtils');
 var PrintUtils = require('./utils/PrintUtils');
 var MathUtils = require('./utils/MathUtils');
+var CollisionUtils = require('./utils/CollisionUtils');
 var Constants = require('./constants/constants');
 var Ball = require('./entity/ball');
 var Vector = require('./entity/vector');
@@ -43,8 +44,27 @@ GameScene.prototype = {
         for (var i = 0;i < 5;i++) {
             for (var j = 0;j < 10;j++) {
                 if (this.bricksMap[i][j] > 0) {
-                    var pos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
-                    PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], pos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+                    var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+                    // DO COLLISIONS
+                    if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
+                        console.log('COLLIDE!', i, j, testBall.pos);
+                        this.bricksMap[i][j] = 0;
+                    }
+                    PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], boxPos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+                }
+            }
+        }
+    },
+
+    // Do Cllisions
+    doCollisions: function () {
+        for (var i = 0;i < 5;i++) {
+            for (var j = 0;j < 10;j++) {
+                if (this.bricksMap[i][j] > 0) {
+                    var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+                    if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
+                        this.bricksMap[i][j] = 0;
+                    }
                 }
             }
         }
@@ -167,7 +187,7 @@ function queue () {
 
 module.exports = GameScene;
 
-},{"./constants/constants":2,"./entity/ball":3,"./entity/vector":4,"./utils/EventUtils":6,"./utils/MathUtils":7,"./utils/PrintUtils":9,"./utils/paintUtils":10}],2:[function(require,module,exports){
+},{"./constants/constants":2,"./entity/ball":3,"./entity/vector":4,"./utils/CollisionUtils":6,"./utils/EventUtils":7,"./utils/MathUtils":8,"./utils/PrintUtils":10,"./utils/paintUtils":11}],2:[function(require,module,exports){
 var Constants = {
     GAMESCENE_HEIGHT: 300,
     GAMESCENE_WIDTH: 445,
@@ -191,6 +211,7 @@ module.exports = Constants;
 
 var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
+var CollisionUtils = require('../utils/CollisionUtils');
 var Constants = require('../constants/constants');
 
 function Ball (pos, velocity) {
@@ -205,7 +226,7 @@ Ball.prototype = {
         PaintUtils.drawCircle(ctx, Constants.BALL_COLOR, this.pos, Constants.BALL_RADIUS);
     },
     move: function (bricksMap) {
-        console.log('IN MOVE', bricksMap);
+        // console.log('IN MOVE', bricksMap);
         this.pos = this.pos.add(this.velocity);
         // 计算出当前pos 在 bricks map 里的 i j 坐标
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
@@ -213,13 +234,17 @@ Ball.prototype = {
         //  如果是实心， 更新checkmap 为0（消失）, 速度反向
         console.log(GridX, GridY);
         // y 要在bricks 范围之内才进行collision check
-        if (GridY < 5) {
-            console.log(bricksMap[GridY][GridX]);
-            if (bricksMap[GridY][GridX] === 1) {
-                bricksMap[GridY][GridX] = 0;
-                this.velocity.y = -this.velocity.y;
-            }
-        }
+        // if (GridY < 5) {
+        //     // console.log(bricksMap[GridY][GridX]);
+        //     // TODO!
+        //     if (CollisionUtils.CircleToRectCheckHit(rPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, this.pos, Constants.BALL_RADIUS)) {
+        //         if (bricksMap[GridY][GridX] === 1) {
+        //             bricksMap[GridY][GridX] = 0;
+        //             // TODO : 速度改变与碰撞到的边有关
+        //             this.velocity.y = -this.velocity.y;
+        //         }
+        //     }
+        // }
         
         // BOUNDRY DETECT
         if (this.pos.x - Constants.BALL_RADIUS < 0) {
@@ -253,7 +278,7 @@ Ball.prototype = {
 
 module.exports = Ball;
 
-},{"../constants/constants":2,"../entity/vector":4,"../utils/PaintUtils":8}],4:[function(require,module,exports){
+},{"../constants/constants":2,"../entity/vector":4,"../utils/CollisionUtils":6,"../utils/PaintUtils":9}],4:[function(require,module,exports){
 /**
  * 
  */
@@ -291,6 +316,79 @@ gameScene.init();
 
 
 },{"./GameScene":1}],6:[function(require,module,exports){
+/**
+ * COLLISION DETECT UTILS
+ */
+
+var MathUtils = require('./MathUtils');
+var Vector = require('../entity/vector');
+
+var CollisionUtils = {
+    CircleToCircleCheckHit: function (pos1, r1, pos2, r2) {
+        if (MathUtils.getDistanceSquare(pos1, pos2) <= (r1 + r2) * (r1 + r2)) {
+            return true;
+        }
+        return false;
+    },
+
+    CircleToRectCheckHit: function (rPos, height, width, cPos, r) {
+        var mayHit = this.PointToRectCheckHit(cPos, new Vector(rPos.x - r, rPos.y - r), height + 2 * r, width + 2 * r);
+        if (!mayHit) return false;
+
+        // LEFT
+        if (cPos.x < rPos.x) {
+            // LEFT TOP
+            if (cPos.y < rPos.y) {
+                if (MathUtils.getDistanceSquare(cPos, rPos) >= r * r) {
+                    return false;
+                }
+            }
+            else {
+                // LEFT BOTTOM
+                if (cPos.y > rPos.y + height) {
+                    if (MathUtils.getDistanceSquare(cPos, new Vector(rPos.x, rPos.y + height)) >= r * r) {
+                        return false;
+                    }
+                }
+            }
+        }
+        else {
+            // RIGHT
+            if (cPos.x > rPos.x + width) {
+                // RIGHT TOP
+                if (cPos.y < rPos.y) {
+                    if (MathUtils.getDistanceSquare(cPos, new Vector(rPos.x + width, rPos.y)) >= r * r) {
+                        return false;
+                    }
+                }
+                else {
+                    // RIGHT BOTTOM
+                    if (cPos.y > rPos.y + height) {
+                        if (MathUtils.getDistanceSquare(cPos, new Vector(rPos.x + width, rPos.y + height)) >= r * r) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+
+    },
+
+    PointToRectCheckHit: function (pPos, rPos, height, width) {
+        if ((pPos.x > rPos.x && pPos.x < rPos.x + width) && 
+            (pPos.x > rPos.x && pPos.x < rPos.x + width)) {
+                return true;
+            }
+
+            return false;
+    }
+};
+
+
+module.exports = CollisionUtils;
+},{"../entity/vector":4,"./MathUtils":8}],7:[function(require,module,exports){
 var EventUtil = {
     addHandler: function (element, type, handler) {
         if (element.addEventListener) {
@@ -315,9 +413,15 @@ var EventUtil = {
 }
 
 module.exports = EventUtil;
-},{}],7:[function(require,module,exports){
-
 },{}],8:[function(require,module,exports){
+var MathUtils = {
+    getDistanceSquare: function (pos1, pos2) {
+        return (pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y - pos2.y) * (pos1.y - pos2.y);
+    },
+};
+
+module.exports = MathUtils;
+},{}],9:[function(require,module,exports){
 let PaintUtil = {
     drawRect: function (ctx, color, pos, width, height) {
         ctx.beginPath();
@@ -336,8 +440,8 @@ let PaintUtil = {
 }
 
 module.exports = PaintUtil;
-},{}],9:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"dup":7}],10:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}]},{},[5]);
+},{}],10:[function(require,module,exports){
+
+},{}],11:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"dup":9}]},{},[5]);

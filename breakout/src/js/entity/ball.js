@@ -4,6 +4,7 @@
 
 var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
+var CollisionUtils = require('../utils/CollisionUtils');
 var Constants = require('../constants/constants');
 
 function Ball (pos, velocity) {
@@ -18,7 +19,7 @@ Ball.prototype = {
         PaintUtils.drawCircle(ctx, Constants.BALL_COLOR, this.pos, Constants.BALL_RADIUS);
     },
     move: function (bricksMap) {
-        console.log('IN MOVE', bricksMap);
+        // console.log('IN MOVE', bricksMap);
         this.pos = this.pos.add(this.velocity);
         // 计算出当前pos 在 bricks map 里的 i j 坐标
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
@@ -26,13 +27,17 @@ Ball.prototype = {
         //  如果是实心， 更新checkmap 为0（消失）, 速度反向
         console.log(GridX, GridY);
         // y 要在bricks 范围之内才进行collision check
-        if (GridY < 5) {
-            console.log(bricksMap[GridY][GridX]);
-            if (bricksMap[GridY][GridX] === 1) {
-                bricksMap[GridY][GridX] = 0;
-                this.velocity.y = -this.velocity.y;
-            }
-        }
+        // if (GridY < 5) {
+        //     // console.log(bricksMap[GridY][GridX]);
+        //     // TODO!
+        //     if (CollisionUtils.CircleToRectCheckHit(rPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, this.pos, Constants.BALL_RADIUS)) {
+        //         if (bricksMap[GridY][GridX] === 1) {
+        //             bricksMap[GridY][GridX] = 0;
+        //             // TODO : 速度改变与碰撞到的边有关
+        //             this.velocity.y = -this.velocity.y;
+        //         }
+        //     }
+        // }
         
         // BOUNDRY DETECT
         if (this.pos.x - Constants.BALL_RADIUS < 0) {

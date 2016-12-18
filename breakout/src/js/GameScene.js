@@ -2,6 +2,7 @@ var EventUtils = require('./utils/EventUtils');
 var PaintUtils = require('./utils/paintUtils');
 var PrintUtils = require('./utils/PrintUtils');
 var MathUtils = require('./utils/MathUtils');
+var CollisionUtils = require('./utils/CollisionUtils');
 var Constants = require('./constants/constants');
 var Ball = require('./entity/ball');
 var Vector = require('./entity/vector');
@@ -42,8 +43,27 @@ GameScene.prototype = {
         for (var i = 0;i < 5;i++) {
             for (var j = 0;j < 10;j++) {
                 if (this.bricksMap[i][j] > 0) {
-                    var pos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
-                    PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], pos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+                    var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+                    // DO COLLISIONS
+                    if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
+                        console.log('COLLIDE!', i, j, testBall.pos);
+                        this.bricksMap[i][j] = 0;
+                    }
+                    PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], boxPos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
+                }
+            }
+        }
+    },
+
+    // Do Cllisions
+    doCollisions: function () {
+        for (var i = 0;i < 5;i++) {
+            for (var j = 0;j < 10;j++) {
+                if (this.bricksMap[i][j] > 0) {
+                    var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
+                    if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
+                        this.bricksMap[i][j] = 0;
+                    }
                 }
             }
         }

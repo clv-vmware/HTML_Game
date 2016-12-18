@@ -25,7 +25,7 @@ Ball.prototype = {
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
         var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
         //  如果是实心， 更新checkmap 为0（消失）, 速度反向
-        console.log(GridX, GridY);
+        // console.log(GridX, GridY);
         // y 要在bricks 范围之内才进行collision check
         // if (GridY < 5) {
         //     // console.log(bricksMap[GridY][GridX]);
@@ -48,7 +48,7 @@ Ball.prototype = {
             this.pos.x = Constants.GAMESCENE_WIDTH - Constants.BALL_RADIUS;
             this.velocity.x = -this.velocity.x;
         }
-
+        //  GAME OVER!
         if (this.pos.y - Constants.BALL_RADIUS < 0) {
             this.pos.y = Constants.BALL_RADIUS;
             this.velocity.y = -this.velocity.y;

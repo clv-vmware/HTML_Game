@@ -54,7 +54,7 @@ var CollisionUtils = {
                 }
             }
         }
-        console.log('cPos : ', cPos, 'rPos : ', rPos);
+        // console.log('cPos : ', cPos, 'rPos : ', rPos);
         return true;
 
     },

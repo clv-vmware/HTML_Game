@@ -6,6 +6,7 @@ var MathUtils = require('./utils/MathUtils');
 var CollisionUtils = require('./utils/CollisionUtils');
 var Constants = require('./constants/constants');
 var Ball = require('./entity/ball');
+var Board = require('./entity/board');
 var Vector = require('./entity/vector');
 
 
@@ -15,6 +16,7 @@ var ctx = canvas.getContext('2d');
 
 var testBall = new Ball(new Vector(Constants.GAMESCENE_WIDTH / 2, Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS), new Vector(0, 0));
 testBall.setVelocity(new Vector(5, 15));
+var testBoard = new Board();
 
 function GameScene () {
     this.bricksMap = initBricksMap();
@@ -47,7 +49,7 @@ GameScene.prototype = {
                     var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
                     // DO COLLISIONS
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
-                        console.log('COLLIDE!', i, j, testBall.pos);
+                        // console.log('COLLIDE!', i, j, testBall.pos);
                         this.bricksMap[i][j] = 0;
                     }
                     PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], boxPos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
@@ -116,22 +118,17 @@ function initButtons () {
 };
 
 function listenKeyBoardEvent () {
+    
     EventUtils.addHandler(window, 'keydown', function (event) {
-        if(event.keyCode === Constants.DOWN_ARROW) {
-            testTetromino.setVelocity(new Vector(0, 2));
-        }
-        else if(event.keyCode === Constants.LEFT_ARROW) {
-            
-            testTetromino.setVelocity(new Vector(-1, 0));
+        console.log('listenKeyBoardEvent', event.keyCode);
+        if(event.keyCode === Constants.LEFT_ARROW) {
+            console.log('LEFT ARROR');
+            testBoard.move(2);
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            testTetromino.setVelocity(new Vector(1, 0));
-        } 
-
-        // UP ARROW: CHANGE Tetromino SHAPE
-        else if(event.keyCode === Constants.UP_ARROW) {
-            testTetromino.changeShape();
-        } 
+            console.log('RIGHT ARROR');
+            testBoard.move(-2);
+        }
     });
 };
 
@@ -175,6 +172,7 @@ function update () {
 
 function draw () {
     testBall.draw(ctx);
+    testBoard.draw(ctx);
     gameScene.drawBricks();
 }
 
@@ -187,13 +185,13 @@ function queue () {
 
 module.exports = GameScene;
 
-},{"./constants/constants":2,"./entity/ball":3,"./entity/vector":4,"./utils/CollisionUtils":6,"./utils/EventUtils":7,"./utils/MathUtils":8,"./utils/PrintUtils":10,"./utils/paintUtils":11}],2:[function(require,module,exports){
+},{"./constants/constants":2,"./entity/ball":3,"./entity/board":4,"./entity/vector":5,"./utils/CollisionUtils":7,"./utils/EventUtils":8,"./utils/MathUtils":9,"./utils/PrintUtils":11,"./utils/paintUtils":12}],2:[function(require,module,exports){
 var Constants = {
     GAMESCENE_HEIGHT: 300,
     GAMESCENE_WIDTH: 445,
 
     BRICK_WIDTH: 40,
-    BRICK_HEIGHT: 30,
+    BRICK_HEIGHT: 20,
     BRICK_MARGIN: 5,
 
 
@@ -201,6 +199,14 @@ var Constants = {
 
     BALL_COLOR: 'cornflowerblue',
     BALL_RADIUS: 10, 
+
+    // BOARD
+    BOARD_WIDTH: 40,
+    BOARD_HEIGHT: 5,
+
+    // ARROW Constants
+    LEFT_ARROW: 39,
+    RIGHT_ARROW: 37
 };
 
 module.exports = Constants;
@@ -232,7 +238,7 @@ Ball.prototype = {
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
         var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
         //  如果是实心， 更新checkmap 为0（消失）, 速度反向
-        console.log(GridX, GridY);
+        // console.log(GridX, GridY);
         // y 要在bricks 范围之内才进行collision check
         // if (GridY < 5) {
         //     // console.log(bricksMap[GridY][GridX]);
@@ -255,7 +261,7 @@ Ball.prototype = {
             this.pos.x = Constants.GAMESCENE_WIDTH - Constants.BALL_RADIUS;
             this.velocity.x = -this.velocity.x;
         }
-
+        //  GAME OVER!
         if (this.pos.y - Constants.BALL_RADIUS < 0) {
             this.pos.y = Constants.BALL_RADIUS;
             this.velocity.y = -this.velocity.y;
@@ -278,7 +284,42 @@ Ball.prototype = {
 
 module.exports = Ball;
 
-},{"../constants/constants":2,"../entity/vector":4,"../utils/CollisionUtils":6,"../utils/PaintUtils":9}],4:[function(require,module,exports){
+},{"../constants/constants":2,"../entity/vector":5,"../utils/CollisionUtils":7,"../utils/PaintUtils":10}],4:[function(require,module,exports){
+/**
+ * 
+ */
+
+var Vector = require('../entity/vector');
+var Constants = require('../constants/constants');
+var PaintUtils = require('../utils/PaintUtils');
+
+
+function Board (pos, color) {
+    this.pos = pos || new Vector(0, 290);
+    this.color = color || 'grey';
+}
+
+
+Board.prototype = {
+    draw:  function (ctx) {
+        PaintUtils.drawRect(ctx, this.color, this.pos, Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
+    },
+    move: function (x) {
+        this.pos = this.pos.add(new Vector(x, 0));
+        if (this.pos.x < 0) {
+            this.pos.x = 0;
+        }
+        else if (this.pos.x + Constants.BOARD_WIDTH > Constants.GAMESCENE_WIDTH) {
+            this.pos.x = Constants.GAMESCENE_WIDTH - Constants.BOARD_WIDTH;
+        }
+    }
+
+};
+
+module.exports = Board;
+
+
+},{"../constants/constants":2,"../entity/vector":5,"../utils/PaintUtils":10}],5:[function(require,module,exports){
 /**
  * 
  */
@@ -307,7 +348,7 @@ Vector.prototype = {
 }
 
 module.exports = Vector;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // game entry
 var GameScene = require('./GameScene');
 
@@ -315,7 +356,7 @@ var gameScene = new GameScene();
 gameScene.init();
 
 
-},{"./GameScene":1}],6:[function(require,module,exports){
+},{"./GameScene":1}],7:[function(require,module,exports){
 /**
  * COLLISION DETECT UTILS
  */
@@ -372,7 +413,7 @@ var CollisionUtils = {
                 }
             }
         }
-        console.log('cPos : ', cPos, 'rPos : ', rPos);
+        // console.log('cPos : ', cPos, 'rPos : ', rPos);
         return true;
 
     },
@@ -389,7 +430,7 @@ var CollisionUtils = {
 
 
 module.exports = CollisionUtils;
-},{"../entity/vector":4,"./MathUtils":8}],7:[function(require,module,exports){
+},{"../entity/vector":5,"./MathUtils":9}],8:[function(require,module,exports){
 var EventUtil = {
     addHandler: function (element, type, handler) {
         if (element.addEventListener) {
@@ -414,7 +455,7 @@ var EventUtil = {
 }
 
 module.exports = EventUtil;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var MathUtils = {
     getDistanceSquare: function (pos1, pos2) {
         return (pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y - pos2.y) * (pos1.y - pos2.y);
@@ -422,7 +463,7 @@ var MathUtils = {
 };
 
 module.exports = MathUtils;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 let PaintUtil = {
     drawRect: function (ctx, color, pos, width, height) {
         ctx.beginPath();
@@ -441,8 +482,8 @@ let PaintUtil = {
 }
 
 module.exports = PaintUtil;
-},{}],10:[function(require,module,exports){
-
 },{}],11:[function(require,module,exports){
-arguments[4][9][0].apply(exports,arguments)
-},{"dup":9}]},{},[5]);
+
+},{}],12:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"dup":10}]},{},[6]);

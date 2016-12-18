@@ -5,6 +5,7 @@ var MathUtils = require('./utils/MathUtils');
 var CollisionUtils = require('./utils/CollisionUtils');
 var Constants = require('./constants/constants');
 var Ball = require('./entity/ball');
+var Board = require('./entity/board');
 var Vector = require('./entity/vector');
 
 
@@ -14,6 +15,7 @@ var ctx = canvas.getContext('2d');
 
 var testBall = new Ball(new Vector(Constants.GAMESCENE_WIDTH / 2, Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS), new Vector(0, 0));
 testBall.setVelocity(new Vector(5, 15));
+var testBoard = new Board();
 
 function GameScene () {
     this.bricksMap = initBricksMap();
@@ -46,7 +48,7 @@ GameScene.prototype = {
                     var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
                     // DO COLLISIONS
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
-                        console.log('COLLIDE!', i, j, testBall.pos);
+                        // console.log('COLLIDE!', i, j, testBall.pos);
                         this.bricksMap[i][j] = 0;
                     }
                     PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], boxPos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
@@ -115,22 +117,17 @@ function initButtons () {
 };
 
 function listenKeyBoardEvent () {
+    
     EventUtils.addHandler(window, 'keydown', function (event) {
-        if(event.keyCode === Constants.DOWN_ARROW) {
-            testTetromino.setVelocity(new Vector(0, 2));
-        }
-        else if(event.keyCode === Constants.LEFT_ARROW) {
-            
-            testTetromino.setVelocity(new Vector(-1, 0));
+        console.log('listenKeyBoardEvent', event.keyCode);
+        if(event.keyCode === Constants.LEFT_ARROW) {
+            console.log('LEFT ARROR');
+            testBoard.move(2);
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            testTetromino.setVelocity(new Vector(1, 0));
-        } 
-
-        // UP ARROW: CHANGE Tetromino SHAPE
-        else if(event.keyCode === Constants.UP_ARROW) {
-            testTetromino.changeShape();
-        } 
+            console.log('RIGHT ARROR');
+            testBoard.move(-2);
+        }
     });
 };
 
@@ -174,6 +171,7 @@ function update () {
 
 function draw () {
     testBall.draw(ctx);
+    testBoard.draw(ctx);
     gameScene.drawBricks();
 }
 

@@ -14,7 +14,7 @@ var canvas = document.querySelector("#gameScene");
 var ctx = canvas.getContext('2d');
 
 var testBall = new Ball(new Vector(Constants.GAMESCENE_WIDTH / 2, Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS), new Vector(0, 0));
-testBall.setVelocity(new Vector(5, 15));
+testBall.setVelocity(new Vector(5, 9.8));
 var testBoard = new Board();
 
 function GameScene () {
@@ -119,14 +119,11 @@ function initButtons () {
 function listenKeyBoardEvent () {
     
     EventUtils.addHandler(window, 'keydown', function (event) {
-        console.log('listenKeyBoardEvent', event.keyCode);
         if(event.keyCode === Constants.LEFT_ARROW) {
-            console.log('LEFT ARROR');
-            testBoard.move(2);
+            testBoard.move(10);
         }
         else if(event.keyCode === Constants.RIGHT_ARROW) {
-            console.log('RIGHT ARROR');
-            testBoard.move(-2);
+            testBoard.move(-10);
         }
     });
 };

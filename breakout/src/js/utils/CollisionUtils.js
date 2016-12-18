@@ -14,6 +14,7 @@ var CollisionUtils = {
     },
 
     CircleToRectCheckHit: function (rPos, height, width, cPos, r) {
+        
         var mayHit = this.PointToRectCheckHit(cPos, new Vector(rPos.x - r, rPos.y - r), height + 2 * r, width + 2 * r);
         if (!mayHit) return false;
 
@@ -53,14 +54,14 @@ var CollisionUtils = {
                 }
             }
         }
-
+        console.log('cPos : ', cPos, 'rPos : ', rPos);
         return true;
 
     },
 
     PointToRectCheckHit: function (pPos, rPos, height, width) {
         if ((pPos.x > rPos.x && pPos.x < rPos.x + width) && 
-            (pPos.x > rPos.x && pPos.x < rPos.x + width)) {
+            (pPos.y > rPos.y && pPos.y < rPos.y + height)) {
                 return true;
             }
 

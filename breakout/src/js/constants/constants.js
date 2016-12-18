@@ -3,7 +3,7 @@ var Constants = {
     GAMESCENE_WIDTH: 445,
 
     BRICK_WIDTH: 40,
-    BRICK_HEIGHT: 20,
+    BRICK_HEIGHT: 30,
     BRICK_MARGIN: 5,
 
 

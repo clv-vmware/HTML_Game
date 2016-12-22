@@ -49,7 +49,10 @@ GameScene.prototype = {
                     // DO COLLISIONS
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
                         // console.log('COLLIDE!', i, j, testBall.pos);
+                        console.log('do colli', testBall.velocity);
+                        testBall.velocity = new Vector(-testBall.velocity.x, -testBall.velocity.y);
                         this.bricksMap[i][j] = 0;
+                        
                     }
                     PaintUtils.drawRect(ctx, Constants.COLOR_BAR[i], boxPos, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT);
                 }
@@ -65,6 +68,7 @@ GameScene.prototype = {
                     var boxPos = new Vector((j) * (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN), (i) * (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
                         this.bricksMap[i][j] = 0;
+                        
                     }
                 }
             }
@@ -137,6 +141,7 @@ var then = Date.now();
 var interval = 1000 / fps;
 var delta;
 var runningFlag = true;
+var gameOver = false;
 
 // LOOP HELPERS FUNCS
 
@@ -173,7 +178,7 @@ function draw () {
 }
 
 function queue () {
-    if (!runningFlag) return;
+    if (!runningFlag || gameOver) return;
     window.requestAnimationFrame(loop);
 }
 

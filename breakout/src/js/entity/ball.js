@@ -50,8 +50,9 @@ Ball.prototype = {
         }
         //  GAME OVER!
         if (this.pos.y - Constants.BALL_RADIUS < 0) {
-            this.pos.y = Constants.BALL_RADIUS;
-            this.velocity.y = -this.velocity.y;
+            gameOver = true;
+            // this.pos.y = Constants.BALL_RADIUS;
+            // this.velocity.y = -this.velocity.y;
         }
        else  if (this.pos.y + Constants.BALL_RADIUS > Constants.GAMESCENE_HEIGHT) {
             this.pos.y = Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS;

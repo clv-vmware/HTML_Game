@@ -10,7 +10,7 @@ var Constants = {
     COLOR_BAR: ['red', 'yellow', 'green', '#03fcfb', 'blue'],
 
     BALL_COLOR: 'cornflowerblue',
-    BALL_RADIUS: 10, 
+    BALL_RADIUS: 5, 
 
     // BOARD
     BOARD_WIDTH: 40,

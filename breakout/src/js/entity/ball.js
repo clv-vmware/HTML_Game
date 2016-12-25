@@ -6,6 +6,7 @@ var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
 var CollisionUtils = require('../utils/CollisionUtils');
 var Constants = require('../constants/constants');
+var GameScene = require('../GameScene');
 
 function Ball (pos, velocity) {
     this.pos = pos || new Vector(0, 0);
@@ -50,11 +51,13 @@ Ball.prototype = {
         }
         //  GAME OVER!
         if (this.pos.y - Constants.BALL_RADIUS < 0) {
-            gameOver = true;
-            // this.pos.y = Constants.BALL_RADIUS;
-            // this.velocity.y = -this.velocity.y;
+            this.pos.y = Constants.BALL_RADIUS;
+            this.velocity.y = -this.velocity.y;
         }
        else  if (this.pos.y + Constants.BALL_RADIUS > Constants.GAMESCENE_HEIGHT) {
+            // gameOver = true;
+            console.log('HIT BOTTOM!', GameScene.runningFlag);
+            GameScene.runningFlag = false;
             this.pos.y = Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS;
             this.velocity.y = -this.velocity.y;
         }

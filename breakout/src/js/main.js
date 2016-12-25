@@ -1,6 +1,6 @@
 // game entry
-var GameScene = require('./GameScene');
+var GameSceneObj = require('./GameScene');
 
-var gameScene = new GameScene();
+var gameScene = new GameSceneObj.GameScene();
 gameScene.init();
 

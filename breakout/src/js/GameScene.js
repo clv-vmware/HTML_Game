@@ -23,6 +23,7 @@ function GameScene () {
 }
 
 GameScene.prototype = {
+    gameOver: false,
     init: function () {
         loop();
         initButtons();
@@ -49,8 +50,9 @@ GameScene.prototype = {
                     // DO COLLISIONS
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
                         // console.log('COLLIDE!', i, j, testBall.pos);
-                        console.log('do colli', testBall.velocity);
+                        // console.log('do colli', testBall.velocity);
                         testBall.velocity = new Vector(-testBall.velocity.x, -testBall.velocity.y);
+                        // testBall.velocity = new Vector(0, 0);
                         this.bricksMap[i][j] = 0;
                         
                     }
@@ -184,4 +186,5 @@ function queue () {
 
 
 
-module.exports = GameScene;
+module.exports.GameScene = GameScene;
+module.exports.runningFlag = runningFlag;

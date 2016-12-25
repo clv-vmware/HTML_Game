@@ -24,6 +24,7 @@ function GameScene () {
 }
 
 GameScene.prototype = {
+    gameOver: false,
     init: function () {
         loop();
         initButtons();
@@ -50,8 +51,9 @@ GameScene.prototype = {
                     // DO COLLISIONS
                     if (CollisionUtils.CircleToRectCheckHit(boxPos, Constants.BRICK_HEIGHT, Constants.BRICK_WIDTH, testBall.pos, Constants.BALL_RADIUS)) {
                         // console.log('COLLIDE!', i, j, testBall.pos);
-                        console.log('do colli', testBall.velocity);
+                        // console.log('do colli', testBall.velocity);
                         testBall.velocity = new Vector(-testBall.velocity.x, -testBall.velocity.y);
+                        // testBall.velocity = new Vector(0, 0);
                         this.bricksMap[i][j] = 0;
                         
                     }
@@ -185,7 +187,8 @@ function queue () {
 
 
 
-module.exports = GameScene;
+module.exports.GameScene = GameScene;
+module.exports.runningFlag = runningFlag;
 
 },{"./constants/constants":2,"./entity/ball":3,"./entity/board":4,"./entity/vector":5,"./utils/CollisionUtils":7,"./utils/EventUtils":8,"./utils/MathUtils":9,"./utils/PrintUtils":11,"./utils/paintUtils":12}],2:[function(require,module,exports){
 var Constants = {
@@ -200,7 +203,7 @@ var Constants = {
     COLOR_BAR: ['red', 'yellow', 'green', '#03fcfb', 'blue'],
 
     BALL_COLOR: 'cornflowerblue',
-    BALL_RADIUS: 10, 
+    BALL_RADIUS: 5, 
 
     // BOARD
     BOARD_WIDTH: 40,
@@ -221,6 +224,7 @@ var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
 var CollisionUtils = require('../utils/CollisionUtils');
 var Constants = require('../constants/constants');
+var GameScene = require('../GameScene');
 
 function Ball (pos, velocity) {
     this.pos = pos || new Vector(0, 0);
@@ -265,11 +269,13 @@ Ball.prototype = {
         }
         //  GAME OVER!
         if (this.pos.y - Constants.BALL_RADIUS < 0) {
-            gameOver = true;
-            // this.pos.y = Constants.BALL_RADIUS;
-            // this.velocity.y = -this.velocity.y;
+            this.pos.y = Constants.BALL_RADIUS;
+            this.velocity.y = -this.velocity.y;
         }
        else  if (this.pos.y + Constants.BALL_RADIUS > Constants.GAMESCENE_HEIGHT) {
+            // gameOver = true;
+            console.log('HIT BOTTOM!', GameScene.runningFlag);
+            GameScene.runningFlag = false;
             this.pos.y = Constants.GAMESCENE_HEIGHT - Constants.BALL_RADIUS;
             this.velocity.y = -this.velocity.y;
         }
@@ -287,7 +293,7 @@ Ball.prototype = {
 
 module.exports = Ball;
 
-},{"../constants/constants":2,"../entity/vector":5,"../utils/CollisionUtils":7,"../utils/PaintUtils":10}],4:[function(require,module,exports){
+},{"../GameScene":1,"../constants/constants":2,"../entity/vector":5,"../utils/CollisionUtils":7,"../utils/PaintUtils":10}],4:[function(require,module,exports){
 /**
  * 
  */
@@ -353,9 +359,9 @@ Vector.prototype = {
 module.exports = Vector;
 },{}],6:[function(require,module,exports){
 // game entry
-var GameScene = require('./GameScene');
+var GameSceneObj = require('./GameScene');
 
-var gameScene = new GameScene();
+var gameScene = new GameSceneObj.GameScene();
 gameScene.init();
 
 

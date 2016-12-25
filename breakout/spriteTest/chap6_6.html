@@ -5,10 +5,7 @@
             #gameScene {
                 background-color: #000;
             }
-
-
         </style>
-
     </head>
     <body>
         <canvas id="canvas" height="500" width="500"></canvas>
@@ -28,7 +25,6 @@
                             width = sprite.width,
                             height = sprite.height,
                             radius = sprite.width / 2;
-
                         context.save();
                         context.beginPath();
                         context.arc(x, y, radius, 0, Math.PI * 2, false);
@@ -46,8 +42,6 @@
                         context.stroke();
 
                         context.restore();
-
-
                     },
                 };
 
@@ -152,31 +146,6 @@
                 context.stroke();
 
                 window.requestAnimationFrame(animate);
-                /*
-                GRAVITY_FORCE = 9.81,
-                PLATFORM_HEIGHT_IN_METERS = 10,
-                pixelsPerMeter = (canvas.height - LEDGE_TOP) / PLATFORM_HEIGHT_IN_METERS,
-                moveBall = {
-                    excute: function (sprite, context, time) {
-                        if (fallingAnimationTimer.isRunning()) {
-                            sprite.top += sprite.velocityY / fps;
-                            sprite.velocityY = GRAVITY_FORCE * (fallingAnimationTimer.getElapsedTime() / 1000) * pixelsPerMeter;
-                            if (sprite.top > canvas.height) {
-                                stopFalling();
-                            }
-                        }
-                    },
-
-                },
-                function stopFalling () {
-                    fallingAnimationTimer.stop();
-                    ball.left = LEDGE_LEFT + LEDGE_WIDTH / 2 - BALL_RADIUS;
-                    ball.top = LEDGE_TOP - BALL_RADIUS * 2;
-                    ball.velocityY = 0;
-                },
-                fallingAnimationTimer = new AnimationTimer();,
-                ball = new Sprite('ball', {paint: function () {}}, [moveBall]);
-                */
         </script>
 
 

@@ -21,7 +21,11 @@ Ball.prototype = {
     },
     move: function (bricksMap) {
         // console.log('IN MOVE', bricksMap);
-        this.pos = this.pos.add(this.velocity);
+        // TODO 模拟重力
+        var fps = 5;
+        var GRAVITY_FORCE = 9.81;
+        this.pos.x = this.pos.add(this.velocity).x;
+        this.pos.y = this.pos.
         // 计算出当前pos 在 bricks map 里的 i j 坐标
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
         var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));

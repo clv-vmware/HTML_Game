@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>gravity test</title>
+        <style>
+            #gameScene {
+                background-color: #000;
+            }
+
+
+        </style>
+
+    </head>
+    <body>
+        <canvas id="canvas" height="500" width="500"></canvas>
+        <script src="./Stopwatch.js"></script>
+        <script src="./AnimationTimer.js"></script>
+        <script src="./Sprite.js"></script>
+        
+        <script>
+            window.onload = function () {
+                var context = document.getElementById('canvas').getContext('2d');
+                    context.save();
+                    context.beginPath();
+                    context.arc(300, 125, 50, 0, 2 * Math.PI, false);
+                    context.clip();
+
+                    // 
+                    context.beginPath();
+                    context.fillStyle = 'red';
+                    context.rect(0, 0, 600, 250);
+                    context.fill();
+                    // inner shadow 
+                    context.beginPath();
+                    context.lineWidth = 4;
+                    context.shadowColor = 'black';
+                    context.shadowBlur = 15;
+                    context.shadowOffsetX = 0;
+                    context.shadowOffsetY = 0;
+                    context.arc(300, 125, 52, 0, 2 * Math.PI, false);
+                    context.stroke();
+                    context.restore();
+            }
+            
+            
+        </script>
+
+
+    </body>
+
+</html>

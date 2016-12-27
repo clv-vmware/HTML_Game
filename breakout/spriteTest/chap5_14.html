@@ -38,6 +38,32 @@
                     strokeStyle: 'gray'
                 },
                 {
+                    x: 150,
+                    y: 250,
+                    lastX: 150,
+                    lastY: 250,
+                    velocityX: 3.2,
+                    velocityY: -3.5,
+                    radius: 25,
+                    innerColor: 'rgba(255, 255, 0, 1)',
+                    middleColor: 'rgba(255, 255, 0, 0.7)',
+                    outerColor: 'rgba(255, 255, 0, 5)',
+                    strokeStyle: 'gray'
+                },
+                {
+                    x: 150,
+                    y: 250,
+                    lastX: 150,
+                    lastY: 250,
+                    velocityX: 1.1,
+                    velocityY: -2.2,
+                    radius: 25,
+                    innerColor: 'rgba(255, 255, 0, 1)',
+                    middleColor: 'rgba(255, 255, 0, 0.7)',
+                    outerColor: 'rgba(255, 255, 0, 5)',
+                    strokeStyle: 'gray'
+                },
+                {
                     x: 50,
                     y: 150,
                     lastX: 50,
@@ -84,6 +110,17 @@
 
                         disc.x += disc.velocityX;
                         disc.y += disc.velocityY;
+                    }
+                }
+
+                function updateTimeBased () {
+                    var disc = null,
+                        elapsedTime = time - lastTime,
+
+                    for (var i = 0;i < discs.length; ++i) {
+                        disc = discs[i];
+                        deltaX = disc.velocityX * (elapsedTime / 1000);
+                        deltaY = disc.velocityY;
                     }
                 }
 

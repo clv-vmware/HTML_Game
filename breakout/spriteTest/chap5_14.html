@@ -120,7 +120,10 @@
                     for (var i = 0;i < discs.length; ++i) {
                         disc = discs[i];
                         deltaX = disc.velocityX * (elapsedTime / 1000);
-                        deltaY = disc.velocityY;
+                        deltaY = disc.velocityY * (elapsedTime / 1000);
+                        if (disc.x + deltaX + disc.radius > topContext.canvas.width || ) {
+
+                        }
                     }
                 }
 

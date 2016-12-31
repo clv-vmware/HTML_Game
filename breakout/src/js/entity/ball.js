@@ -5,8 +5,12 @@
 var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
 var CollisionUtils = require('../utils/CollisionUtils');
+var AnimationTimer = require('../utils/AnimationTimer');
 var Constants = require('../constants/constants');
 var GameScene = require('../GameScene');
+
+var PIXELS_PER_METER = 0.5;
+var fallingTimer = new AnimationTimer(10000000);fallingTimer.start();
 
 function Ball (pos, velocity) {
     this.pos = pos || new Vector(0, 0);
@@ -22,10 +26,19 @@ Ball.prototype = {
     move: function (bricksMap) {
         // console.log('IN MOVE', bricksMap);
         // TODO 模拟重力
-        var fps = 5;
+        /*
+        var fps = 30;
         var GRAVITY_FORCE = 9.81;
+        
+        let curVelocityY = GRAVITY_FORCE * ( fallingTimer.getElapsedTime() / 1000) * PIXELS_PER_METER;
+        console.log('Y', curVelocityY, fallingTimer.getElapsedTime(), fallingTimer.isRunning());
+        this.pos.y = this.pos.y + curVelocityY;
+        */
+
+
+
         this.pos.x = this.pos.add(this.velocity).x;
-        this.pos.y = this.pos.
+        this.pos.x = this.pos.add(this.velocity).x;
         // 计算出当前pos 在 bricks map 里的 i j 坐标
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
         var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));

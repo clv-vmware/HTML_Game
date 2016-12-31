@@ -190,7 +190,7 @@ function queue () {
 module.exports.GameScene = GameScene;
 module.exports.runningFlag = runningFlag;
 
-},{"./constants/constants":2,"./entity/ball":3,"./entity/board":4,"./entity/vector":5,"./utils/CollisionUtils":7,"./utils/EventUtils":8,"./utils/MathUtils":9,"./utils/PrintUtils":11,"./utils/paintUtils":12}],2:[function(require,module,exports){
+},{"./constants/constants":2,"./entity/ball":3,"./entity/board":4,"./entity/vector":5,"./utils/CollisionUtils":8,"./utils/EventUtils":9,"./utils/MathUtils":10,"./utils/PrintUtils":12,"./utils/paintUtils":14}],2:[function(require,module,exports){
 var Constants = {
     GAMESCENE_HEIGHT: 300,
     GAMESCENE_WIDTH: 445,
@@ -223,8 +223,12 @@ module.exports = Constants;
 var Vector = require('../entity/vector');
 var PaintUtils = require('../utils/PaintUtils');
 var CollisionUtils = require('../utils/CollisionUtils');
+var AnimationTimer = require('../utils/AnimationTimer');
 var Constants = require('../constants/constants');
 var GameScene = require('../GameScene');
+
+var PIXELS_PER_METER = 0.5;
+var fallingTimer = new AnimationTimer(10000000);fallingTimer.start();
 
 function Ball (pos, velocity) {
     this.pos = pos || new Vector(0, 0);
@@ -239,7 +243,20 @@ Ball.prototype = {
     },
     move: function (bricksMap) {
         // console.log('IN MOVE', bricksMap);
-        this.pos = this.pos.add(this.velocity);
+        // TODO 模拟重力
+        /*
+        var fps = 30;
+        var GRAVITY_FORCE = 9.81;
+        
+        let curVelocityY = GRAVITY_FORCE * ( fallingTimer.getElapsedTime() / 1000) * PIXELS_PER_METER;
+        console.log('Y', curVelocityY, fallingTimer.getElapsedTime(), fallingTimer.isRunning());
+        this.pos.y = this.pos.y + curVelocityY;
+        */
+
+
+
+        this.pos.x = this.pos.add(this.velocity).x;
+        this.pos.x = this.pos.add(this.velocity).x;
         // 计算出当前pos 在 bricks map 里的 i j 坐标
         var GridX = Math.ceil(this.pos.x / (Constants.BRICK_WIDTH + Constants.BRICK_MARGIN));
         var GridY = Math.ceil(this.pos.y / (Constants.BRICK_HEIGHT + Constants.BRICK_MARGIN));
@@ -293,7 +310,7 @@ Ball.prototype = {
 
 module.exports = Ball;
 
-},{"../GameScene":1,"../constants/constants":2,"../entity/vector":5,"../utils/CollisionUtils":7,"../utils/PaintUtils":10}],4:[function(require,module,exports){
+},{"../GameScene":1,"../constants/constants":2,"../entity/vector":5,"../utils/AnimationTimer":7,"../utils/CollisionUtils":8,"../utils/PaintUtils":11}],4:[function(require,module,exports){
 /**
  * 
  */
@@ -328,7 +345,7 @@ Board.prototype = {
 module.exports = Board;
 
 
-},{"../constants/constants":2,"../entity/vector":5,"../utils/PaintUtils":10}],5:[function(require,module,exports){
+},{"../constants/constants":2,"../entity/vector":5,"../utils/PaintUtils":11}],5:[function(require,module,exports){
 /**
  * 
  */
@@ -366,6 +383,49 @@ gameScene.init();
 
 
 },{"./GameScene":1}],7:[function(require,module,exports){
+var Stopwatch = require('./Stopwatch');
+
+function AnimationTimer (duration) {
+    this.duration = duration;
+}
+
+AnimationTimer.prototype = {
+    duration: undefined,
+
+    stopwatch: new Stopwatch(),
+
+    start: function () {
+        this.stopwatch.start();
+    },
+
+    stop: function () {
+        this.stopwatch.stop();
+    },
+
+    getElapsedTime: function () {
+        var elapsedTime = this.stopwatch.getElapsedTime();
+
+        if (!this.stopwatch.running) {
+            return undefined;
+        }
+        else {
+            return elapsedTime;
+        }
+    },
+
+    isRunning: function () {
+        return this.stopwatch.isRunning();
+    },
+
+    isOver: function () {
+        return this.stopwatch.getElapsedTime() > this.duration;
+    }
+};
+
+module.exports = AnimationTimer;
+
+
+},{"./Stopwatch":13}],8:[function(require,module,exports){
 /**
  * COLLISION DETECT UTILS
  */
@@ -439,7 +499,7 @@ var CollisionUtils = {
 
 
 module.exports = CollisionUtils;
-},{"../entity/vector":5,"./MathUtils":9}],8:[function(require,module,exports){
+},{"../entity/vector":5,"./MathUtils":10}],9:[function(require,module,exports){
 var EventUtil = {
     addHandler: function (element, type, handler) {
         if (element.addEventListener) {
@@ -464,7 +524,7 @@ var EventUtil = {
 }
 
 module.exports = EventUtil;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var MathUtils = {
     getDistanceSquare: function (pos1, pos2) {
         return (pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y - pos2.y) * (pos1.y - pos2.y);
@@ -472,7 +532,7 @@ var MathUtils = {
 };
 
 module.exports = MathUtils;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 let PaintUtil = {
     drawRect: function (ctx, color, pos, width, height) {
         ctx.beginPath();
@@ -491,8 +551,52 @@ let PaintUtil = {
 }
 
 module.exports = PaintUtil;
-},{}],11:[function(require,module,exports){
-
 },{}],12:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}]},{},[6]);
+
+},{}],13:[function(require,module,exports){
+function Stopwatch () {
+
+}
+
+Stopwatch.prototype = {
+    startTime: 0,
+
+    running: false,
+
+    elapsed: undefined,
+
+    start: function () {
+        this.startTime = +new Date();
+        this.elapsed = undefined;
+        this.running = true;
+    },
+
+    stop: function () {
+        this.elapsed = (+new Date()) - this.startTime;
+        this.running = false;
+    },
+
+    getElapsedTime: function () {
+        if (this.running) {
+            return (+new Date()) - this.startTime;
+        }
+        else {
+            return this.elapsed;
+        }
+    },
+
+    isRunning: function () {
+        return this.running;
+    },
+
+    reset: function () {
+        this.elapsed = 0;
+    }
+
+
+};
+
+module.exports = Stopwatch;
+},{}],14:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}]},{},[6]);

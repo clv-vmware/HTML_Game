@@ -1,7 +1,14 @@
 <html>
 <head>
     <script src="./lib/three.js"></script>
+    <script src="./lib/sim/sim.js"></script>
     <script>
+        
+        Earth.prototype.init = function () {
+            var earthGroup = new THREE.Object3D();
+            this.setObject3D(earthGroup);
+        }
+        ///////////
 
         ROTATION_Y = 0.001;
         TILE = 0.41;
@@ -36,8 +43,8 @@
             var normalMap = THREE.ImageUtils.loadTexture("./res/earth_normal_2048.jpg");
             var specularMap = THREE.ImageUtils.loadTexture("./res/earth_specular_2048.jpg");
 
-            var shader = THREE.ShaderUtils.lib["normal"],
-                    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+            var shader = THREE.ShaderUtils.lib[ "normal" ];
+            var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
 
 
             uniforms["tNormal"].texture = normalMap;
@@ -61,7 +68,7 @@
             globeMesh.rotation.z = TILE;
             scene.add(globeMesh);
 
-            var cloudsMap = THREE.ImageUtils.loadTexture("./res/earth_clouds_2048.jpg");
+            var cloudsMap = THREE.ImageUtils.loadTexture("./res/earth_clouds_1024.png");
             var cloudsMaterial = new THREE.MeshLambertMaterial({
                 color: 0xffffff, map: cloudsMap, transparent: true
             });
@@ -76,9 +83,9 @@
             // var material = new THREE.MeshBasicMaterial({map: map});
             var geometry = new THREE.SphereGeometry(1, 32, 32);
 
-            var geometry2 = new THREE.SphereBufferGeometry(1, 64, 16);
-            var wireframe = new THREE.WireframeGeometry(geometry2);
-            var line = new THREE.LineSegments(geometry2);
+//            var geometry2 = new THREE.SphereBufferGeometry(1, 64, 16);
+//            var wireframe = new THREE.WireframeGeometry(geometry2);
+//            var line = new THREE.LineSegments(geometry2);
 //            line.material.depthTest = false;
 //            line.material.opacity = 0.25;
 //            line.material.transparent = true;
@@ -99,7 +106,7 @@
 
                 if (animating) {
                     globeMesh.rotation.y -= 0.01;
-                    cloudsMesh.rotation.y += 0.01;
+                    cloudsMesh.rotation.y -= 0.01;
                 }
                 requestAnimationFrame(run);
             }

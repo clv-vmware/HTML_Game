@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script src="./lib/three.js"></script>
+    <script>
+        function onLoad () {
+            var container = document.getElementById("container");
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+
+            // SCENE
+            var scene = new THREE.Scene();
+
+            var camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 4000);
+            camera.position.set(0, 0, 3.333);
+            scene.add(camera);
+
+            // var geometry = new THREE.PlaneGeometry(1, 1);
+            // TEST FACE3
+            var material = new THREE.MeshFaceMaterial({color: 0x00cc00});
+
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3(-50, -50, 0));
+            geometry.vertices.push(new THREE.Vector3(50, -50, 0));
+            geometry.vertices.push(new THREE.Vector3(50, 50, 0));
+
+            var normal = new THREE.Vector3(0, 1, 0);
+            var color = new THREE.Color(0xffaa00);
+            var materialIndex = 0;
+            var face = new THREE.Face3(0, 1, 2, normal, color, materialIndex);
+            geometry.faces.push(face);
+            // geometry.computeFaceNormals();
+            // geometry.computeVertexNormals();
+            var mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</head>
+<body onLoad="onLoad();">
+<div id="container" style="width: 500px;height: 500px; background-color: #000"></div>
+</body>
+</html>
